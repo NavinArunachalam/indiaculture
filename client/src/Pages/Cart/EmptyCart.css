@@ -1,0 +1,156 @@
+/* EmptyCart.css */
+.preloader {
+  max-width: 30em;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  margin: 30px auto;
+  display: grid;
+  grid-template-columns: 1fr; /* Single column */
+  grid-template-rows: auto 1fr auto; /* Header, content, footer-like structure */
+  align-items: center; /* Vertically center grid items */
+  justify-items: center; /* Horizontally center grid items */
+  min-height: 100%; /* Fill the available height of cart-page */
+  padding: 1.5em; /* Match cart-items padding */
+  background: #fff; /* Match cart-items background */
+  border-radius: 12px; /* Match cart-items border-radius */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12); /* Match cart-items shadow */
+}
+
+/* Green blur glow */
+.preloader::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 250px;
+  background: rgba(0, 100, 0, 0.15);
+  filter: blur(50px);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+.preloader__text {
+  grid-row: 2; /* Place text in the middle row */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 9em; /* Maintain text height */
+  margin-top: 0; /* Remove margin to rely on grid */
+}
+
+.preloader__msg {
+  width: 100%;
+  color: #1a3a1a;
+  opacity: 1;
+  animation: msg 14s linear infinite;
+  text-align: center; /* Ensure text is centered */
+}
+
+.preloader__msg--last {
+  animation: msgReverse 14s linear infinite;
+  text-align: center; /* Ensure text is centered */
+}
+
+.cart {
+  display: block;
+  width: 12em;
+  height: 12em;
+  margin: 0 auto; /* Center horizontally within grid cell */
+}
+
+/* Static track */
+.cart__track {
+  stroke: hsla(120, 10%, 10%, 0.15);
+}
+
+/* Animated cart parts */
+.cart__lines {
+  stroke: hsl(120, 90%, 35%);
+}
+
+.cart__top {
+  stroke-dasharray: 338 338;
+  stroke-dashoffset: -338;
+  animation: cartTop 2s ease-in-out infinite;
+}
+
+.cart__wheel1 {
+  transform-origin: 43px 111px;
+  animation: cartWheel1 1.5s linear infinite;
+}
+
+.cart__wheel2 {
+  transform-origin: 102px 111px;
+  animation: cartWheel2 1.5s linear infinite;
+}
+
+.cart__wheel-stroke {
+  stroke: hsl(120, 90%, 35%);
+  stroke-dasharray: 81.68 81.68;
+  stroke-dashoffset: 81.68;
+  animation: cartWheelStroke 1.5s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes msg {
+  0%, 45% { opacity: 1; visibility: visible; }
+  50%, 100% { opacity: 0; visibility: hidden; }
+}
+
+@keyframes msgReverse {
+  0%, 45% { opacity: 0; visibility: hidden; }
+  50%, 100% { opacity: 1; visibility: visible; }
+}
+
+@keyframes cartTop {
+  from { stroke-dashoffset: -338; }
+  50% { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 338; }
+}
+
+@keyframes cartWheel1 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cartWheel2 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+@keyframes cartWheelStroke {
+  from, to { stroke-dashoffset: 81.68; }
+  50% { stroke-dashoffset: 40.84; }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .preloader {
+    padding: 0.8em;
+    min-height: 100%; /* Fill mobile height */
+  }
+
+  .cart {
+    width: 9em;
+    height: 9em;
+  }
+
+  .preloader__text {
+    height: 7em;
+  }
+
+  .preloader__msg {
+    font-size: 0.9em;
+  }
+}
+
+@media (min-width: 769px) {
+  .preloader {
+    padding: 1.5em;
+    min-height: 100%; /* Fill desktop height */
+  }
+}

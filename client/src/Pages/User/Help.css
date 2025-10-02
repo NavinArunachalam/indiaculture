@@ -1,0 +1,128 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero Section */
+.hero-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  min-height: 100vh;
+  background-color: #F8F8F8;
+}
+.hero-header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.5rem;
+  font-weight: 600;
+  color: #2B2B2B;
+  letter-spacing: 1px;
+}
+.hero-header h2 {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-top: 15px;
+  color: #5A5A5A;
+}
+.hero-header p {
+  font-weight: 300;
+  margin-top: 10px;
+  color: #6F6F6F;
+  letter-spacing: 1px;
+}
+.hero-header .trusted {
+  color: #4CAF50;
+  font-weight: 400;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+.btn-cta {
+  margin-top: 20px;
+  border-radius: 25px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  padding: 12px 30px;
+}
+
+/* Steps Section */
+.steps {
+  padding: 60px 0;
+  text-align: center;
+}
+.steps .number {
+  width: 60px;
+  height: 60px;
+  background-color: #388E3C;
+  color: #fff;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  line-height: 60px;
+  margin: auto;
+}
+
+/* Skin Type Match Section */
+.section-green {
+  background-color: #2E7D32;
+  color: #fff;
+  padding: 60px 0;
+  text-align: center;
+}
+
+/* Contact Boxes */
+.contact-boxes {
+  padding: 60px 0;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.contact-box {
+  background-color: #fff;
+  border: 2px solid #2E7D32;
+  border-radius: 12px;
+  padding: 30px;
+  width: 250px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.contact-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.contact-box img {
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+/* Footer */
+footer {
+  background-color: #111;
+  color: #ccc;
+  padding: 40px 0;
+  text-align: center;
+}
+footer a {
+  color: #2E7D32;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* WhatsApp Floating Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 999;
+}
+.whatsapp-float img {
+  width: 60px;
+  transition: transform 0.3s;
+}
+.whatsapp-float img:hover {
+  transform: scale(1.1);
+}
