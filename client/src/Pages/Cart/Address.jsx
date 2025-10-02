@@ -13,11 +13,12 @@ const Address = () => {
   const { cartItems = [], subtotal = 0, shipping = 0, total = 0, productId, quantity } = location.state || {};
 
   const [formData, setFormData] = useState({
+    name: "",
     pincode: "",
     city: "",
     state: "",
     address: "",
-    phone: "", // Added phone field
+    phone: "",
   });
 
   useEffect(() => {
@@ -25,11 +26,12 @@ const Address = () => {
       try {
         const res = await axios.get(`${API_URL}/api/user`, { withCredentials: true });
         setFormData({
+          name: res.data.name || "",
           pincode: res.data.pincode || "",
           city: res.data.city || "",
           state: res.data.state || "",
           address: res.data.address || "",
-          phone: res.data.mobile || "", // Prefill phone
+          phone: res.data.mobile || "",
         });
       } catch (err) {
         console.error("Failed to fetch user address", err);
@@ -40,15 +42,15 @@ const Address = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (![formData.pincode, formData.city, formData.state, formData.address, formData.phone].every(f => f && f.trim())) {
+    if (![formData.name, formData.pincode, formData.city, formData.state, formData.address, formData.phone].every(f => f && f.trim())) {
       Toastify({
-        text: "Please fill all address fields, including phone number",
+        text: "Please fill all address fields",
         duration: 2000,
         gravity: "bottom",
         position: "center",
@@ -57,7 +59,6 @@ const Address = () => {
       return;
     }
 
-    // Validate phone number (e.g., 10 digits)
     if (!/^[0-9]{10}$/.test(formData.phone)) {
       Toastify({
         text: "Please enter a valid 10-digit phone number",
@@ -88,14 +89,7 @@ const Address = () => {
           total,
           productId,
           quantity,
-          address: {
-            name: formData.name || "",
-            phone: formData.phone,
-            address: formData.address,
-            city: formData.city,
-            state: formData.state,
-            pincode: formData.pincode,
-          },
+          address: { ...formData }, // pass full address
         },
       });
     } catch (err) {
@@ -117,6 +111,19 @@ const Address = () => {
         <section className="card address-card">
           <h2>Delivery Address</h2>
           <form onSubmit={handleSubmit}>
+            <div className="form-field">
+              <label htmlFor="name">Full Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Your full name"
+                required
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+
             <div className="row">
               <div className="form-field">
                 <label htmlFor="pincode">Pincode</label>

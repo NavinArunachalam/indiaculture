@@ -21,7 +21,7 @@ const ReviewOrder = () => {
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [shipping, setShipping] = useState(0);
-  const hasFetched = useRef(false); // ✅ Prevent re-fetching after navigation
+  const hasFetched = useRef(false);
 
   const calculateShipping = (state, subtotal) => {
     const nearbyStates = ["Kerala", "Karnataka", "Andhra Pradesh", "Telangana", "Puducherry"];
@@ -32,7 +32,7 @@ const ReviewOrder = () => {
   };
 
   useEffect(() => {
-    if (hasFetched.current) return; // ✅ Skip if already fetched
+    if (hasFetched.current) return;
     hasFetched.current = true;
 
     const fetchData = async () => {
@@ -50,7 +50,7 @@ const ReviewOrder = () => {
             position: "center",
             backgroundColor: "#facc15",
           }).showToast();
-          navigate("/login", { replace: true }); // ✅ Use replace to avoid history stack growth
+          navigate("/login", { replace: true });
           return;
         }
         setUserId(user._id);
@@ -148,7 +148,7 @@ const ReviewOrder = () => {
     };
 
     fetchData();
-  }, [productId, quantity]); // ✅ Only primitive dependencies
+  }, [productId, quantity]);
 
   // Place order
   const handlePlaceOrder = async () => {
@@ -173,7 +173,6 @@ const ReviewOrder = () => {
       const subtotal = validItems.reduce((sum, item) => sum + item.product.new_price * item.quantity, 0);
       const total = subtotal + shipping;
 
-      // ✅ Minimal order data
       const orderData = {
         items: validItems.map(item => ({
           product: item.product._id,
@@ -195,17 +194,15 @@ const ReviewOrder = () => {
 
       await axios.post(`${API_URL}/api/orders`, orderData, { withCredentials: true });
 
-      // Clear cart if not single product
       if (!productId) {
         await axios.delete(`${API_URL}/api/cart/clear`, { withCredentials: true });
       }
 
-      // WhatsApp notification
       let message = `*New Order Placed!*\n\nName: ${name}\nPhone: ${phone}\nAddress: ${addr}, ${city}, ${state} - ${pincode}\n\nItems:\n`;
       validItems.forEach((item, idx) => {
-        message +=`${idx + 1}. ${item.product.name} - Qty: ${item.quantity} - ₹${item.product.new_price}\n`;
+        message += `${idx + 1}. ${item.product.name} - Qty: ${item.quantity} - ₹${item.product.new_price}\n`;
       });
-      message += `\nSubtotal: ₹${subtotal}\nShipping: ₹${shipping}\nTotal: ₹${total}\nPayment:UPI`;
+      message += `\nSubtotal: ₹${subtotal}\nShipping: ₹${shipping}\nTotal: ₹${total}\nPayment: UPI`;
 
       const whatsappNumber = "918870757606";
       window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
@@ -234,7 +231,6 @@ const ReviewOrder = () => {
   if (loading) return <div className="text-center py-10">Loading order details...</div>;
   if (!cartItems.length) return <div className="text-center py-10 text-red-500">No items to checkout.</div>;
 
-  // Use in-stock items for UI subtotal
   const validItems = cartItems.filter(item => item.product.stock > 0 && item.product.stock >= item.quantity);
   const subtotal = validItems.reduce((sum, item) => sum + item.product.new_price * item.quantity, 0);
   const total = subtotal + shipping;
@@ -242,12 +238,8 @@ const ReviewOrder = () => {
   return (
     <div className="review-page-wrapper">
       <div className="review-bg"></div>
-      <div className="review-overlay"></div>
-
       <div className="review-page">
         <h1>Review & Confirm Your Order</h1>
-
-        {/* Left Section */}
         <div>
           {address && (
             <div className="address-card">
@@ -258,7 +250,6 @@ const ReviewOrder = () => {
               <p>{address.phone}</p>
             </div>
           )}
-
           <div className="cart-items">
             {cartItems.map(item => (
               <div className="cart-item" key={item.product._id}>
@@ -283,8 +274,6 @@ const ReviewOrder = () => {
             ))}
           </div>
         </div>
-
-        {/* Right Section */}
         <div className="summary-card">
           <h2>Order Summary</h2>
           <div className="summary-row">
