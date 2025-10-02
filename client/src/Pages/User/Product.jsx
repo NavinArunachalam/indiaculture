@@ -187,7 +187,7 @@ const Product = () => {
           No products available in this category.
         </p>
       ) : (
-        <div className="flex flex-wrap gap-2 sm:gap-4">
+        <div className="flex flex-wrap gap-2 sm:gap-2">
           {filteredProducts.map((product) => {
             const isWished = wishlist.includes(product._id);
             const inCart = cart.includes(product._id);
@@ -196,8 +196,9 @@ const Product = () => {
               <div
                 key={product._id}
                 className="
-                  w-1/2 sm:w-1/4
-                  px-1 sm:px-2
+                  w-[calc(50%-4px)]
+                  sm:w-[calc(24%-1px)]
+                  px-1 
                   bg-white rounded-lg shadow-md overflow-hidden relative
                   transition-transform duration-300 hover:-translate-y-1
                 "
