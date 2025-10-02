@@ -12,11 +12,14 @@ const PORT = process.env.PORT || 5000;
 
 const isProd = process.env.NODE_ENV === "production";
 
+// ------------------- Trust Proxy for Vercel -------------------
+app.set('trust proxy', 1); // Add this line
+
 // ------------------- CORS -------------------
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // frontend URL
-    credentials: true, // allow cookies
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
   })
 );
 
@@ -36,10 +39,10 @@ const userSession = session({
     collectionName: "sessions",
   }),
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
-    sameSite: isProd ? "none" : "lax", // cross-site for Vercel
-    secure: isProd, // required for sameSite none
-    httpOnly: true, // inaccessible to JS
+    maxAge: 1000 * 60 * 60 * 24,
+    sameSite: isProd ? "none" : "lax",
+    secure: isProd,
+    httpOnly: true,
   },
 });
 
