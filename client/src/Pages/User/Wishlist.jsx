@@ -67,7 +67,7 @@ const Wishlist = () => {
             key={product._id}
             className="
               w-[calc(50%-4px)]
-              sm:w-[calc(24%-1px)]
+              sm:w-[calc(19%-1px)]
               px-1 
               bg-white rounded-lg shadow-md overflow-hidden relative
               transition-transform duration-300 hover:-translate-y-1
