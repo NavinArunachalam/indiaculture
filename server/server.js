@@ -5,22 +5,23 @@ require("dotenv").config();
 const appRoutes = require("./routes");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-
+// ✅ CORS
 app.use(
   cors({
-    origin: "http://localhost:5173", // frontend URL
-    credentials: true, // allow cookies/auth headers
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // frontend URL
+    credentials: true,
   })
 );
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
+// ✅ Session config
 const userSession = session({
   name: "connect.sid",
   secret: process.env.SESSION_SECRET || "SecretKey",
@@ -31,23 +32,22 @@ const userSession = session({
     collectionName: "sessions",
   }),
   cookie: {
-    maxAge: 1000 * 60 * 60 * 60 * 60* 24,
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
     sameSite: "lax",
-    secure: false,
+    secure: process.env.NODE_ENV === "production",
   },
 });
-
 app.use("/api", userSession);
 
+// ✅ Routes
 appRoutes(app);
 
+// ✅ Default route
 app.get("/", (req, res) => {
-  res.json({ message: "Express backend is running!" });
+  res.json({ message: "Express backend is running on Vercel!" });
 });
 
-// -------------------
-// Centralized error handling
-// -------------------
+// ✅ Centralized error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Internal server error" });
@@ -56,14 +56,16 @@ app.use((err, req, res, next) => {
 app.disable("etag");
 
 // -------------------
-// Connect DB & Start server
+// ❌ REMOVE app.listen()
 // -------------------
+
+// ✅ Instead export app (Vercel needs this)
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
+    console.log("MongoDB connected ✅");
   })
   .catch((err) => {
     console.error("Failed to connect to DB:", err);
   });
+
+module.exports = app;
