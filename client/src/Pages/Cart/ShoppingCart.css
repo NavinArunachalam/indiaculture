@@ -190,7 +190,7 @@
   pointer-events: none;
 }
 
-.delete-btn {
+.delete-button {
  
   border: none;
   padding: 0.5em 0.8em;
@@ -202,12 +202,12 @@
   transition: background 0.3s ease, transform 0.2s ease;
 }
 
-.delete-btn:hover {
+.delete-button:hover {
  color: #1c7c3c;
   transform: scale(1.05);
 }
 
-.delete-btn:disabled {
+.delete-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -268,58 +268,120 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* --- Mobile / Responsive Fixes --- */
-@media (max-width: 768px) {
+@media (max-width: 412px) {
   .cart-page {
-    margin: 1em auto;
-    padding: 0.6em; /* reduce wrapper padding */
-    gap: 1em; /* reduce gap between cards */
+    margin: 0.5em; /* Reduce margin to maximize content area */
+    padding: 0.4em; /* Further reduce padding */
+    gap: 0.8em; /* Smaller gap between grid items */
+    max-width: 100%; /* Ensure it fits within viewport */
+    box-sizing: border-box; /* Include padding in width calculation */
   }
 
   /* Address / Cart / Summary cards */
   .address-card,
   .cart-items,
   .summary-card {
-    padding: 0.8em 1em; /* smaller padding */
+    padding: 0.6em; /* Even smaller padding for compact layout */
+    border-radius: 8px; /* Slightly smaller border-radius */
+  }
+
+  .cart-page h1 {
+    font-size: 1.5em; /* Smaller header for 412px */
+    padding: 0 0.3em; /* Reduce padding to prevent overflow */
+    line-height: 1.1em; /* Tighter line height */
   }
 
   .cart-item {
-    padding: 0.6em 0; /* smaller spacing between items */
-    gap: 0.5em; /* reduce gap inside cart-item */
+    padding: 0.5em 0; /* Reduce vertical padding */
+    gap: 0.4em; /* Tighter gap for wrapped elements */
+    flex-direction: column; /* Stack elements vertically for better fit */
+    align-items: flex-start; /* Align to start for consistency */
   }
 
-  .item-details span {
-    font-size: 0.85em;
+  .item-info {
+    flex-direction: row; /* Keep image and details side-by-side */
+    gap: 0.5em; /* Reduce gap */
+    width: 100%; /* Full width to prevent overflow */
   }
 
   .item-info img {
-    width: 45px;
-    height: 45px; /* smaller image */
+    width: 40px; /* Smaller image for 412px */
+    height: 40px;
+    border-radius: 6px; /* Slightly smaller border-radius */
+  }
+
+  .item-details {
+    flex: 1; /* Take available space */
+    max-width: calc(100% - 50px); /* Account for image width + gap */
+  }
+
+  .item-details span {
+    font-size: 0.8em; /* Smaller font for item name */
+    white-space: normal; /* Allow wrapping for long names */
+    text-overflow: clip; /* Avoid ellipsis for better readability */
+    line-height: 1.2em; /* Tighter line height */
+  }
+
+  .item-price {
+    font-size: 0.85em; /* Slightly smaller price text */
+  }
+
+  .stock-status {
+    font-size: 0.7em; /* Smaller stock badge */
+    padding: 0.2em 0.5em; /* Reduce padding */
+  }
+
+  .qty-controls {
+    flex-direction: row; /* Keep horizontal layout */
+    gap: 0.5em; /* Reduce gap between controls */
+    width: 100%; /* Full width for better spacing */
+    justify-content: space-between; /* Spread controls evenly */
+  }
+
+  .qty-control {
+    width: 100px; /* Slightly smaller for 412px */
+    font-size: 0.9em; /* Adjust font size */
+  }
+
+  .qty-control button {
+    padding: 0.4em 0.6em; /* Smaller buttons */
+  }
+
+  .qty-control .qty-value {
+    padding: 0.3em; /* Adjust padding */
+    min-width: 25px; /* Smaller width for quantity */
+  }
+
+  .delete-button {
+    padding: 0.4em 0.6em; /* Smaller delete button */
+    font-size: 0.9em; /* Adjust icon size */
+  }
+
+  .delete-button svg {
+    width: 18px; /* Smaller icon */
+    height: 18px;
   }
 
   .summary-card h2 {
-    font-size: 1.1em;
-    margin-bottom: 0.5em;
+    font-size: 1em; /* Smaller summary header */
+    margin-bottom: 0.4em;
   }
 
   .summary-row {
-    font-size: 0.9em;
-    padding: 0.5em 0;
+    font-size: 0.85em; /* Smaller summary text */
+    padding: 0.4em 0; /* Reduce padding */
   }
 
   .summary-row.total {
-    font-size: 1.05em;
-    padding-top: 0.5em;
+    font-size: 1em; /* Slightly smaller total */
+    padding-top: 0.4em;
   }
 
   .checkout-btn {
-    font-size: 0.85em;
-    padding: 0.5em;
+    font-size: 0.8em; /* Smaller button text */
+    padding: 0.4em; /* Smaller padding */
   }
-}
-
-
-/* Larger screens (tablet and above) */
+}/* Larger screens (tablet and above) */
 @media (min-width: 769px) {
   .cart-page {
     grid-template-columns: 2fr 1fr; /* Restore two-column layout */
@@ -328,5 +390,112 @@
   .cart-page h1 {
     grid-column: span 2; /* Span both columns on desktop */
     font-size: 2.2em;
+  }
+}
+
+@media (max-width: 412px) {
+  /* Previous styles unchanged */
+  .cart-page {
+    margin: 0.5em;
+    padding: 0.4em;
+    gap: 0.8em;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .cart-item {
+    padding: 0.5em 0;
+    gap: 0.4em;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .item-info {
+    flex-direction: row;
+    gap: 0.5em;
+    width: 100%;
+  }
+
+  .item-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+  }
+
+  .item-details {
+    flex: 1;
+    max-width: calc(100% - 50px);
+  }
+
+  .item-details span {
+    font-size: 0.8em;
+    white-space: normal;
+    text-overflow: clip;
+    line-height: 1.2em;
+  }
+
+  .item-price {
+    font-size: 0.85em;
+  }
+
+  .stock-status {
+    font-size: 0.7em;
+    padding: 0.2em 0.5em;
+  }
+
+  /* Updated qty-controls to fix overlap */
+  .qty-controls {
+    flex-direction: row;
+    gap: 0.8em; /* Increased gap to separate qty-control and delete-button */
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.2em; /* Add slight padding to prevent edge alignment */
+  }
+
+  .qty-control {
+    width: 90px; /* Slightly reduced width to accommodate gap */
+    font-size: 0.85em; /* Smaller font for better fit */
+    border-radius: 6px; /* Slightly smaller border-radius */
+  }
+
+  .qty-control button {
+    padding: 0.3em 0.5em; /* Reduced padding for compact buttons */
+  }
+
+  .qty-control .qty-value {
+    padding: 0.3em;
+    min-width: 20px; /* Reduced to fit narrower viewport */
+  }
+
+  .delete-button {
+    padding: 0.3em 0.5em; /* Smaller padding to avoid overlap */
+    font-size: 0.85em;
+    margin-left: 0.5em; /* Add margin to ensure separation */
+    border-radius: 6px; /* Match qty-control border-radius */
+    flex-shrink: 0; /* Prevent shrinking */
+  }
+
+  
+
+  /* Summary card styles unchanged */
+  .summary-card h2 {
+    font-size: 1em;
+    margin-bottom: 0.4em;
+  }
+
+  .summary-row {
+    font-size: 0.85em;
+    padding: 0.4em 0;
+  }
+
+  .summary-row.total {
+    font-size: 1em;
+    padding-top: 0.4em;
+  }
+
+  .checkout-btn {
+    font-size: 0.8em;
+    padding: 0.4em;
   }
 }

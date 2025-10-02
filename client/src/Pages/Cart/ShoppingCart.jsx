@@ -277,10 +277,10 @@ const Cart = () => {
                 </button>
               </div>
               <button
-                className="delete-btn"
+                className="delete-button"
                 onClick={() => handleDelete(item.product._id)}
               >
-                <MdDelete size={20} />
+                <MdDelete size={28} />
               </button>
             </div>
           </div>
