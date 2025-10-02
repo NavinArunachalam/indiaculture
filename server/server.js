@@ -8,20 +8,18 @@ const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// ✅ CORS
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // frontend URL
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // ✅ use env in production
     credentials: true,
   })
 );
-
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
-// ✅ Session config
 const userSession = session({
   name: "connect.sid",
   secret: process.env.SESSION_SECRET || "SecretKey",
@@ -37,17 +35,18 @@ const userSession = session({
     secure: process.env.NODE_ENV === "production",
   },
 });
+
 app.use("/api", userSession);
 
-// ✅ Routes
 appRoutes(app);
 
-// ✅ Default route
 app.get("/", (req, res) => {
-  res.json({ message: "Express backend is running on Vercel!" });
+  res.json({ message: "Express backend is running!" });
 });
 
-// ✅ Centralized error handling
+// -------------------
+// Centralized error handling
+// -------------------
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Internal server error" });
@@ -56,16 +55,11 @@ app.use((err, req, res, next) => {
 app.disable("etag");
 
 // -------------------
-// ❌ REMOVE app.listen()
+// Connect DB (no app.listen)
 // -------------------
-
-// ✅ Instead export app (Vercel needs this)
 connectDB()
-  .then(() => {
-    console.log("MongoDB connected ✅");
-  })
-  .catch((err) => {
-    console.error("Failed to connect to DB:", err);
-  });
+  .then(() => console.log("MongoDB connected ✅"))
+  .catch((err) => console.error("Failed to connect to DB:", err));
 
+// ✅ Export the app for Vercel
 module.exports = app;
