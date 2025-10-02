@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // ✅ use env in production
+    origin: process.env.CLIENT_URL || "https://indiaculture-client.vercel.app",
     credentials: true,
   })
 );
@@ -36,7 +36,7 @@ const userSession = session({
   },
 });
 
-app.use("/api", userSession);
+app.use(userSession);
 
 appRoutes(app);
 
