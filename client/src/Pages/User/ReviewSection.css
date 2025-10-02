@@ -27,7 +27,8 @@
 
 .review-header {
   display: flex;
-  flex-direction: column; /* Stack name and rating vertically */
+  flex-direction: column;
+  /* Stack name and rating vertically */
   font-weight: 500;
   margin-bottom: 5px;
 }
@@ -80,7 +81,8 @@
 
 .review-rating {
   font-size: 1.5rem;
-  margin-top: 5px; /* Small gap between name and stars */
+  margin-top: 5px;
+  /* Small gap between name and stars */
 }
 
 .review-rating .filled {
@@ -148,7 +150,8 @@
   }
 
   .review-heading {
-    font-size: 1.25rem; /* Smaller heading */
+    font-size: 1.25rem;
+    /* Smaller heading */
     margin-bottom: 10px;
   }
 
@@ -192,21 +195,24 @@
   }
 
   .star-rating {
-    font-size: 1.25rem; /* Smaller stars */
+    font-size: 1.25rem;
+    /* Smaller stars */
     gap: 3px;
   }
 
   .review-form .form-control {
     font-size: 0.9rem;
     padding: 8px;
-    min-height: 80px; /* Smaller textarea */
+    min-height: 80px;
+    /* Smaller textarea */
   }
 
   .submit-btn,
   .delete-btn {
     padding: 8px;
     font-size: 0.9rem;
-    max-width: 100%; /* Full-width buttons */
+    max-width: 100%;
+    /* Full-width buttons */
   }
 
   .user-review-actions p {
