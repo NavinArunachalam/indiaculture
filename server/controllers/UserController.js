@@ -1,4 +1,4 @@
-const { createUser, loginUser, getUserById,updateAddress,getAllUsers,updateUserRole} = require("../services/UserService");
+const { createUser, loginUser, getUserById, updateAddress, getAllUsers, updateUserRole } = require("../services/UserService");
 const User = require("../models/User");
 // ✅ Register
 const register = async (req, res, next) => {
@@ -11,33 +11,40 @@ const register = async (req, res, next) => {
   }
 };
 
-// ✅ Login
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user || !(await user.matchPassword(password))) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-  if (!user) return res.status(401).json({ message: "Invalid credentials" });
-  const isMatch = await user.matchPassword(password);
-  if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
+    // ✅ Set session cookie
+    req.session.userId = user._id;
 
-  // ✅ Set session in user_session
-  req.session.userId = user._id;
-
-  res.status(200).json({
-    message: "User login successful",
-    user: { id: user._id, email: user.email, name: user.name },
-  });
+    res.status(200).json({
+      message: "Login successful",
+      user: { id: user._id, name: user.name, email: user.email },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 
 // ✅ Logout
 const logout = (req, res) => {
- req.session.destroy(err => {
-  if (err) return res.status(500).json({ message: "Logout failed" });
-  res.clearCookie("user_session"); // 🔑 only clear user cookie
-  res.json({ message: "User logged out" });
-});
+  req.session.destroy(err => {
+    if (err) return res.status(500).json({ message: "Logout failed" });
 
+    res.clearCookie("connect.sid", {
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+    });
+
+    res.json({ message: "Logged out" });
+  });
 };
 
 // ✅ Get current user
@@ -95,6 +102,6 @@ const adminGetUserById = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, logout, getProfile, updateUserAddress, adminGetAllUsers,adminGetUserById};
+module.exports = { register, login, logout, getProfile, updateUserAddress, adminGetAllUsers, adminGetUserById };
 
 
