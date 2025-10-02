@@ -2,24 +2,30 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 require("dotenv").config();
-const appRoutes = require("./routes");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const cookieParser = require("cookie-parser");
+const appRoutes = require("./routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const isProd = process.env.NODE_ENV === "production";
+
+// ------------------- CORS -------------------
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "https://indiaculture-client.vercel.app",
-    credentials: true,
+    origin: process.env.CLIENT_URL || "http://localhost:5173", // frontend URL
+    credentials: true, // allow cookies
   })
 );
+
+// ------------------- Middleware -------------------
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
+// ------------------- User Session -------------------
 const userSession = session({
   name: "connect.sid",
   secret: process.env.SESSION_SECRET || "SecretKey",
@@ -31,35 +37,28 @@ const userSession = session({
   }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 day
-    sameSite: "none",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProd ? "none" : "lax", // cross-site for Vercel
+    secure: isProd, // required for sameSite none
+    httpOnly: true, // inaccessible to JS
   },
 });
 
 app.use(userSession);
 
+// ------------------- Routes -------------------
 appRoutes(app);
 
-app.get("/", (req, res) => {
-  res.json({ message: "Express backend is running!" });
-});
+app.get("/", (req, res) => res.json({ message: "Backend running!" }));
 
-// -------------------
-// Centralized error handling
-// -------------------
+// ------------------- Error Handling -------------------
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Internal server error" });
 });
 
-app.disable("etag");
-
-// -------------------
-// Connect DB (no app.listen)
-// -------------------
+// ------------------- DB Connect -------------------
 connectDB()
   .then(() => console.log("MongoDB connected ✅"))
   .catch((err) => console.error("Failed to connect to DB:", err));
 
-// ✅ Export the app for Vercel
 module.exports = app;
