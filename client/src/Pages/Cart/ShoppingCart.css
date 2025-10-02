@@ -60,17 +60,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8em 0; /* Reduced padding */
+  padding: 0.8em 0;
   border-bottom: 1px solid #eee;
   flex-wrap: wrap;
-  gap: 0.8em; /* Reduced gap */
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  gap: 0.8em;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out, max-height 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out;
+  max-height: 120px; /* adjust to your item’s typical height */
+  overflow: hidden;
 }
 
 .cart-item.removing {
   transform: translateX(-100%);
   opacity: 0;
+  max-height: 0;
+  margin: 0;
+  padding: 0;
 }
+
 
 .cart-item:last-child {
   border-bottom: none;
