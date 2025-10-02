@@ -26,7 +26,7 @@ const loginAdmin = async (req, res) => {
     res.cookie("admin_jwt", token, {
       httpOnly: true,       // not accessible via JS
       maxAge: 10 * 365 * 24* 60 * 60 *1000, 
-      sameSite: "lax",
+      sameSite: "none",
       secure: process.env.NODE_ENV === "production", // true in production with HTTPS
     });
 
