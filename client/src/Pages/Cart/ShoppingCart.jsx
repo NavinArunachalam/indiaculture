@@ -253,7 +253,7 @@ const Cart = () => {
                     item.product.stock > 0 ? "in-stock" : "out-stock"
                   }`}
                 >
-                  {item.product.stock > 0 ? `In Stock: ${item.product.stock} units` : "Out of Stock"}
+                  {item.product.stock > 0 ? `In Stock` : "Out of Stock"}
                 </span>
               </div>
             </div>

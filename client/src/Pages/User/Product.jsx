@@ -142,9 +142,9 @@ const Product = () => {
         return;
       }
 
-      navigate("/revieworder", { 
-        state: { 
-          productId, 
+      navigate("/revieworder", {
+        state: {
+          productId,
           quantity: 1,
           address: {
             name: user.name,
@@ -153,8 +153,8 @@ const Product = () => {
             city: user.city,
             state: user.state,
             pincode: user.pincode,
-          }
-        } 
+          },
+        },
       });
     } catch {
       Toastify({
@@ -176,17 +176,18 @@ const Product = () => {
   if (loading) return <div className="text-center py-10">Loading products...</div>;
 
   return (
-    <div className="overflow-visible px-2 sm:px-4">
-      <h2 className="text-center text-2xl sm:text-3xl font-bold mb-10 relative after:content-[''] after:block after:w-16 after:h-1 after:bg-green-600 after:mx-auto after:mt-2 after:rounded">
+    <div className="px-1 sm:px-4">
+      {/* Removed overflow-visible to prevent potential overflow issues */}
+      <h2 className="text-center text-xl sm:text-2xl font-bold mb-8 relative after:content-[''] after:block after:w-16 after:h-1 after:bg-green-600 after:mx-auto after:mt-2 after:rounded">
         {selectedCategory === "All" ? "All Products" : selectedCategory}
       </h2>
 
       {filteredProducts.length === 0 ? (
-        <p className="text-center text-gray-500 text-lg sm:text-xl">
+        <p className="text-center text-gray-500 text-base sm:text-lg">
           No products available in this category.
         </p>
       ) : (
-        <div className="flex flex-wrap gap-2 sm:gap-5 px-2">
+        <div className="flex flex-wrap gap-2 sm:gap-4">
           {filteredProducts.map((product) => {
             const isWished = wishlist.includes(product._id);
             const inCart = cart.includes(product._id);
@@ -195,67 +196,70 @@ const Product = () => {
               <div
                 key={product._id}
                 className="
-                  w-[calc(50%-4px)]      /* Two cards per row on mobile, adjusted for 2px gap */
-                  sm:w-[calc(25%-15px)]   /* Four cards per row on sm screens, adjusted for 5px gap */
+                  w-1/2 sm:w-1/4
+                  px-1 sm:px-2
                   bg-white rounded-lg shadow-md overflow-hidden relative
                   transition-transform duration-300 hover:-translate-y-1
                 "
               >
                 {product.badge && (
-                  <div className="absolute top-2 left-0 bg-green-600 text-white px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-bold rounded-r">
+                  <div className="absolute top-2 left-0 bg-green-600 text-white px-2 sm:px-3 py-1 text-xs font-bold rounded-r">
                     {product.badge}
                   </div>
                 )}
 
                 <Link to={`/productdetails/${product._id}`}>
-                  <div className="flex items-center justify-center h-32 sm:h-48 bg-gray-100">
+                  <div className="flex items-center justify-center h-28 sm:h-44 bg-gray-100 overflow-hidden">
                     <img
                       src={product.images?.[0]?.url || "/placeholder.jpg"}
                       alt={product.name}
-                      className="max-w-full max-h-24 sm:max-h-44 object-contain"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 </Link>
 
-                <div className="p-3 sm:p-4">
-                  <span className="text-xs sm:text-sm text-gray-500 uppercase font-bold">
+                <div className="p-2 sm:p-3 overflow-hidden">
+                  <span className="text-xs sm:text-sm text-gray-500 uppercase font-bold truncate">
                     {product.category?.name || "Unknown"}
                   </span>
-                  <h4 className="my-2 sm:my-3 text-sm sm:text-base">
-                    <a href="#" className="text-gray-800 no-underline hover:text-green-600 transition-colors">
+                  <h4 className="my-1 sm:my-2 text-xs sm:text-sm truncate">
+                    <a
+                      href="#"
+                      className="text-gray-800 no-underline hover:text-green-600 transition-colors"
+                    >
                       {product.name}
                     </a>
                   </h4>
                   {product.offer_line && (
-                    <div className="text-green-600 font-semibold text-xs sm:text-sm mb-2">
+                    <div className="text-green-600 font-semibold text-xs sm:text-sm mb-1 sm:mb-2 truncate">
                       {product.offer_line} Launch Offer
                     </div>
                   )}
-                  <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 line-clamp-2">
+                  <p className="text-xs text-gray-600 mb-1 sm:mb-2 line-clamp-2">
                     {product.description}
                   </p>
-                  <div className="text-xs sm:text-sm text-red-600 font-semibold mb-2">
+                  <div className="text-xs text-red-600 font-semibold mb-1 sm:mb-2">
                     {product.stock === 0 ? "Out of Stock" : `In Stock: ${product.stock} units`}
                   </div>
 
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="text-base sm:text-lg text-green-600 font-bold">
+                  <div className="flex justify-between items-center mb-1 sm:mb-2">
+                    <div className="text-sm sm:text-base text-green-600 font-bold">
                       {product.old_price && (
-                        <small className="text-xs sm:text-sm text-gray-500 line-through mr-1 sm:mr-2">
+                        <small className="text-xs text-gray-500 line-through mr-1">
                           ₹{product.old_price}
                         </small>
                       )}
                       ₹{product.new_price}
                     </div>
-                    <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="flex items-center gap-2 sm:gap-2">
                       <button
                         onClick={() => toggleWishlist(product._id)}
                         className="bg-transparent border-none cursor-pointer"
                       >
                         {isWished ? (
-                          <FaHeart className="text-green-800 text-base sm:text-lg" />
+                          <FaHeart className="text-green-800 text-lg sm:text-base" />
                         ) : (
-                          <FaRegHeart className="text-gray-400 text-base sm:text-lg hover:text-green-600 transition" />
+                          <FaRegHeart className="text-gray-400 text-lg sm:text-base hover:text-green-600 transition" />
                         )}
                       </button>
                       <button
@@ -264,8 +268,12 @@ const Product = () => {
                         disabled={product.stock === 0}
                       >
                         <FaShoppingCart
-                          className={`text-base sm:text-lg ${
-                            inCart ? "text-green-800" : product.stock === 0 ? "text-gray-400 cursor-not-allowed" : "text-gray-400 hover:text-green-600 transition"
+                          className={`text-lg sm:text-base ${
+                            inCart
+                              ? "text-green-800"
+                              : product.stock === 0
+                              ? "text-gray-400 cursor-not-allowed"
+                              : "text-gray-400 hover:text-green-600 transition"
                           }`}
                         />
                       </button>
@@ -273,7 +281,7 @@ const Product = () => {
                   </div>
 
                   <button
-                    className="w-full mt-2 sm:mt-3 py-2 sm:py-2.5 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition disabled:bg-gray-500 disabled:cursor-not-allowed"
+                    className="w-full py-1.5 sm:py-2 bg-green-600 text-white text-xs sm:text-sm font-semibold rounded-md hover:bg-green-700 transition disabled:bg-gray-500 disabled:cursor-not-allowed"
                     onClick={() => handleBuyNow(product._id)}
                     disabled={product.stock === 0}
                   >

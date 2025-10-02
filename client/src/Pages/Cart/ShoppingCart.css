@@ -358,8 +358,8 @@
   }
 
   .delete-button svg {
-    width: 18px; /* Smaller icon */
-    height: 18px;
+    width: 20px; /* Smaller icon */
+    height: 20px;
   }
 
   .summary-card h2 {
