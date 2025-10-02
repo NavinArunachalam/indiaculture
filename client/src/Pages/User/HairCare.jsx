@@ -203,9 +203,9 @@ const HairCare = () => {
                         className="bg-transparent border-none cursor-pointer"
                       >
                         {isWished ? (
-                          <FaHeart className="text-green-800 text-base sm:text-lg" />
+                          <FaHeart className="text-green-800 text-xl sm:text-lg" />
                         ) : (
-                          <FaRegHeart className="text-gray-400 text-base sm:text-lg hover:text-green-800 transition" />
+                          <FaRegHeart className="text-gray-400 text-xl sm:text-lg hover:text-green-800 transition" />
                         )}
                       </button>
                       <button
@@ -213,11 +213,10 @@ const HairCare = () => {
                         className="bg-transparent border-none cursor-pointer"
                       >
                         <FaShoppingCart
-                          className={`text-base sm:text-lg ${
-                            inCart
+                          className={`text-xl sm:text-lg ${inCart
                               ? "text-green-800"
                               : "text-gray-400 hover:text-green-800 transition"
-                          }`}
+                            }`}
                         />
                       </button>
                     </div>

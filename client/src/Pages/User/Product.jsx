@@ -45,18 +45,42 @@ const Product = () => {
   }, []);
 
   const toggleWishlist = async (productId) => {
-    try {
-      if (wishlist.includes(productId)) {
-        await axios.delete(`${API_URL}/api/wishlist/${productId}`, { withCredentials: true });
-        setWishlist((prev) => prev.filter((id) => id !== productId));
-      } else {
-        await axios.post(`${API_URL}/api/wishlist`, { productId }, { withCredentials: true });
-        setWishlist((prev) => [...prev, productId]);
-      }
-    } catch {
-      alert("Please login to manage wishlist");
+  try {
+    if (wishlist.includes(productId)) {
+      // ✅ Optimistic update
+      setWishlist((prev) => prev.filter((id) => id !== productId));
+      await axios.delete(`${API_URL}/api/wishlist/${productId}`, { withCredentials: true });
+
+      Toastify({
+        text: "Removed from Wishlist",
+        duration: 2000,
+        gravity: "bottom",
+        position: "center",
+        backgroundColor: "#dc2626", // red
+      }).showToast();
+    } else {
+      // ✅ Optimistic update
+      setWishlist((prev) => [...prev, productId]);
+      await axios.post(`${API_URL}/api/wishlist`, { productId }, { withCredentials: true });
+
+      Toastify({
+        text: "Added to Wishlist",
+        duration: 2000,
+        gravity: "bottom",
+        position: "center",
+        backgroundColor: "#16a34a", // green
+      }).showToast();
     }
-  };
+  } catch {
+    Toastify({
+      text: "Please login to manage wishlist",
+      duration: 2000,
+      gravity: "bottom",
+      position: "center",
+      backgroundColor: "#dc2626",
+    }).showToast();
+  }
+};
 
   const toggleCart = async (productId) => {
     const product = products.find((p) => p._id === productId);
@@ -258,9 +282,9 @@ const Product = () => {
                         className="bg-transparent border-none cursor-pointer"
                       >
                         {isWished ? (
-                          <FaHeart className="text-green-800 text-lg sm:text-base" />
+                          <FaHeart className="text-green-800 text-xl sm:text-base" />
                         ) : (
-                          <FaRegHeart className="text-gray-400 text-lg sm:text-base hover:text-green-600 transition" />
+                          <FaRegHeart className="text-gray-400 text-xl sm:text-base hover:text-green-600 " />
                         )}
                       </button>
                       <button
@@ -269,12 +293,12 @@ const Product = () => {
                         disabled={product.stock === 0}
                       >
                         <FaShoppingCart
-                          className={`text-lg sm:text-base ${
+                          className={`text-xl sm:text-base ${
                             inCart
                               ? "text-green-800"
                               : product.stock === 0
                               ? "text-gray-400 cursor-not-allowed"
-                              : "text-gray-400 hover:text-green-600 transition"
+                              : "text-gray-400  transition"
                           }`}
                         />
                       </button>

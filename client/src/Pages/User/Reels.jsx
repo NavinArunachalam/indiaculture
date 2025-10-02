@@ -71,7 +71,7 @@ const Reels = () => {
 
   return (
     <div className="social-video-sec">
-      <h1 className="text-4xl text-green-900 font-bold font-[times] text-center mt-10 mb-10">
+      <h1 className="text-2xl sm:text-4xl text-green-900 font-bold font-[times] text-center mt-10 mb-10">
         Popular Instagram Videos
       </h1>
       <div

@@ -131,7 +131,10 @@
 @media (max-width: 768px) {
   .preloader {
     padding: 0.8em;
-    min-height: 100%; /* Fill mobile height */
+    min-height: 100%;
+    margin-top: 50%;
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0.12);
+    /* Fill mobile height */
   }
 
   .cart {
