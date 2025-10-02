@@ -4,15 +4,14 @@
   margin: 2em auto;
   padding: 1em;
   display: grid;
-  grid-template-columns: 1fr; /* Single column for mobile */
-  gap: 1.5em; /* Reduced from 2em for better mobile fit */
+  grid-template-columns: 1fr; /* Single column by default for all mobile */
+  gap: 2em;
   background: url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80")
     no-repeat center center/cover;
   position: relative;
   border-radius: 12px;
   overflow: hidden;
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  box-sizing: border-box; /* Ensure padding is included in width */
 }
 
 .cart-page::before {
@@ -34,24 +33,24 @@
 }
 
 .cart-page h1 {
-  grid-column: span 1;
+  grid-column: span 1; /* Span full width on mobile */
   text-align: center;
   margin-bottom: 0.8em;
   font-family: "Playfair Display", serif;
   font-weight: 700;
-  font-size: 1.8em;
+  font-size: 1.8em; /* Reduced for mobile */
   background: linear-gradient(90deg, #08691f, #084734);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.2em;
-  padding: 0 0.5em;
-  white-space: normal;
+  padding: 0 0.5em; /* Prevent text overflow */
+  white-space: normal; /* Allow wrapping */
 }
 
 /* --- Cart Items --- */
 .cart-items {
   background: #fff;
-  padding: 1.2em; /* Slightly reduced for mobile */
+  padding: 1.5em;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
 }
@@ -60,23 +59,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8em 0;
+  padding: 1em 0;
   border-bottom: 1px solid #eee;
-  flex-wrap: wrap;
-  gap: 0.8em;
-  transition: transform 0.3s ease-out, opacity 0.3s ease-out, max-height 0.3s ease-out, margin 0.3s ease-out, padding 0.3s ease-out;
-  max-height: 120px; /* adjust to your item’s typical height */
-  overflow: hidden;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 1em; /* Add gap for better spacing on wrap */
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* Animation for removal */
 }
 
 .cart-item.removing {
   transform: translateX(-100%);
   opacity: 0;
-  max-height: 0;
-  margin: 0;
-  padding: 0;
 }
-
 
 .cart-item:last-child {
   border-bottom: none;
@@ -85,40 +78,40 @@
 .item-info {
   display: flex;
   align-items: center;
-  gap: 0.8em; /* Reduced gap */
-  flex: 1 1 120px; /* Lower minimum width for smaller screens */
-  min-width: 0;
-  width: 100%;
+  gap: 1em;
+  flex: 1 1 150px; /* Flexible but with minimum width */
+  min-width: 0; /* Prevent overflow */
+  width: 100%; /* Full width on mobile */
 }
 
 .item-info img {
-  width: 50px; /* Smaller image for mobile */
-  height: 50px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
   border-radius: 8px;
-  flex-shrink: 0;
+  flex-shrink: 0; /* Image won’t shrink */
 }
 
 .item-details {
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  min-width: 0; /* Prevent long names from breaking layout */
   overflow: hidden;
-  flex: 1;
+  flex: 1; /* Take available space */
 }
 
 .item-details span {
-  font-size: 0.9em;
+  font-size: 0.95em;
   font-weight: 500;
   margin-bottom: 0.3em;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
+  text-overflow: ellipsis; /* Truncate long names */
+  max-width: 100%; /* Ensure it fits */
 }
 
 .item-price {
-  font-size: 0.85em; /* Slightly smaller */
+  font-size: 0.9em;
   color: #444;
   margin-bottom: 0.4em;
 }
@@ -126,10 +119,12 @@
 /* --- Stock Badge --- */
 .stock-status {
   display: inline-block;
-  font-size: 0.75em; /* Slightly larger for readability */
+  font-size: 0.8em;
   font-weight: 600;
-  padding: 0.2em 0.6em;
+  padding: 0.25em 0.7em;
   border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   width: fit-content;
 }
@@ -150,10 +145,7 @@
 .qty-controls {
   display: flex;
   align-items: center;
-  gap: 0.8em;
-  flex-wrap: wrap; /* Allow wrapping on very small screens */
-  width: 100%; /* Full width to manage space */
-  justify-content: space-between;
+  gap: 1em;
 }
 
 .qty-control {
@@ -162,21 +154,19 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
-  flex-shrink: 0;
-  width: 100px; /* Base width */
-  min-width: 80px; /* Minimum for small screens */
-  max-width: 120px; /* Cap width */
+  flex-shrink: 0; /* Prevent shrinking */
+  width: 120px; /* Fixed width for consistency */
 }
 
 .qty-control button {
   background: #f0f0f0;
   border: none;
-  padding: 0.4em 0.7em;
-  font-size: 0.9em;
+  padding: 0.5em 0.8em;
+  font-size: 1em;
   font-weight: bold;
   cursor: pointer;
   transition: 0.2s;
-  flex: 1;
+  flex: 1; /* Equal distribution */
 }
 
 .qty-control button:hover {
@@ -185,35 +175,35 @@
 }
 
 .qty-control .qty-value {
-  min-width: 25px;
+  min-width: 30px;
   text-align: center;
-  font-size: 0.9em;
+  font-size: 0.95em;
   font-weight: 600;
   padding: 0.4em;
   background: #fff;
-  flex: 1;
+  flex: 1; /* Equal distribution */
 }
 
+/* Disabled state */
 .qty-control.disabled {
   opacity: 0.5;
   pointer-events: none;
 }
 
 .delete-button {
+ 
   border: none;
-  padding: 0.4em 0.7em;
+  padding: 0.5em 0.8em;
   border-radius: 8px;
   color: #dd1515;
-  font-size: 0.9em;
+  font-size: 1em;
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
-  flex-shrink: 0;
-  min-width: 40px; /* Ensure button is clickable */
 }
 
 .delete-button:hover {
-  color: #1c7c3c;
+ color: #1c7c3c;
   transform: scale(1.05);
 }
 
@@ -225,15 +215,15 @@
 /* --- Order Summary --- */
 .summary-card {
   background: #fff;
-  padding: 1.2em;
+  padding: 1.5em;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
   height: fit-content;
 }
 
 .summary-card h2 {
-  font-size: 1.2em;
-  margin-bottom: 0.8em;
+  font-size: 1.3em;
+  margin-bottom: 1em;
   text-align: center;
   border-bottom: 2px solid #eee;
   padding-bottom: 0.5em;
@@ -243,32 +233,32 @@
 .summary-row {
   display: flex;
   justify-content: space-between;
-  padding: 0.6em 0;
-  font-size: 0.95em;
+  padding: 0.7em 0;
+  font-size: 1em;
   color: #555;
 }
 
 .summary-row.total {
   font-weight: bold;
-  font-size: 1.1em;
+  font-size: 1.2em;
   color: #222;
   border-top: 2px solid #eee;
-  margin-top: 0.8em;
-  padding-top: 0.8em;
+  margin-top: 1em;
+  padding-top: 1em;
 }
 
 .checkout-btn {
   display: block;
   width: 100%;
-  margin-top: 1em;
-  padding: 0.5em;
+  margin-top: 1.2em;
+  padding: 0.6em;
   background: linear-gradient(135deg, #1b9c39, #11a353);
   border-radius: 8px;
   font-weight: 600;
   text-align: center;
   color: #fff;
   text-decoration: none;
-  font-size: 0.85em;
+  font-size: 0.9em;
   transition: 0.3s;
 }
 
@@ -278,132 +268,139 @@
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* --- Media Queries for Mobile --- */
-/* Very small screens (≤360px, e.g., iPhone 5/SE) */
-@media (max-width: 360px) {
+@media (max-width: 412px) {
   .cart-page {
-    margin: 0.3em;
-    padding: 0.3em;
-    gap: 0.5em;
-    max-width: 100%;
-    box-sizing: border-box;
+    margin: 0.5em; /* Reduce margin to maximize content area */
+    padding: 0.4em; /* Further reduce padding */
+    gap: 0.8em; /* Smaller gap between grid items */
+    max-width: 100%; /* Ensure it fits within viewport */
+    box-sizing: border-box; /* Include padding in width calculation */
   }
 
+  /* Address / Cart / Summary cards */
+  .address-card,
   .cart-items,
   .summary-card {
-    padding: 0.5em;
-    border-radius: 6px;
+    padding: 0.6em; /* Even smaller padding for compact layout */
+    border-radius: 8px; /* Slightly smaller border-radius */
   }
 
   .cart-page h1 {
-    font-size: 1.3em;
-    padding: 0 0.2em;
-    line-height: 1.1em;
+    font-size: 1.5em; /* Smaller header for 412px */
+    padding: 0 0.3em; /* Reduce padding to prevent overflow */
+    line-height: 1.1em; /* Tighter line height */
   }
 
   .cart-item {
-    padding: 0.4em 0;
-    gap: 0.3em;
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 0.5em 0; /* Reduce vertical padding */
+    gap: 0.4em; /* Tighter gap for wrapped elements */
+    flex-direction: column; /* Stack elements vertically for better fit */
+    align-items: flex-start; /* Align to start for consistency */
   }
 
   .item-info {
-    gap: 0.4em;
-    flex: 1 1 100px;
+    flex-direction: row; /* Keep image and details side-by-side */
+    gap: 0.5em; /* Reduce gap */
+    width: 100%; /* Full width to prevent overflow */
   }
 
   .item-info img {
-    width: 35px;
-    height: 35px;
-    border-radius: 6px;
+    width: 40px; /* Smaller image for 412px */
+    height: 40px;
+    border-radius: 6px; /* Slightly smaller border-radius */
   }
 
   .item-details {
-    max-width: calc(100% - 45px);
+    flex: 1; /* Take available space */
+    max-width: calc(100% - 50px); /* Account for image width + gap */
   }
 
   .item-details span {
-    font-size: 0.75em;
-    line-height: 1.1em;
+    font-size: 0.8em; /* Smaller font for item name */
+    white-space: normal; /* Allow wrapping for long names */
+    text-overflow: clip; /* Avoid ellipsis for better readability */
+    line-height: 1.2em; /* Tighter line height */
   }
 
   .item-price {
-    font-size: 0.8em;
+    font-size: 0.85em; /* Slightly smaller price text */
   }
 
   .stock-status {
-    font-size: 0.65em;
-    padding: 0.15em 0.4em;
+    font-size: 0.7em; /* Smaller stock badge */
+    padding: 0.2em 0.5em; /* Reduce padding */
   }
 
   .qty-controls {
-    gap: 0.5em;
-    flex-wrap: wrap;
+    flex-direction: row; /* Keep horizontal layout */
+    gap: 0.5em; /* Reduce gap between controls */
+    width: 100%; /* Full width for better spacing */
+    justify-content: space-between; /* Spread controls evenly */
   }
 
   .qty-control {
-    width: 80px;
-    min-width: 70px;
-    font-size: 0.8em;
+    width: 100px; /* Slightly smaller for 412px */
+    font-size: 0.9em; /* Adjust font size */
   }
 
   .qty-control button {
-    padding: 0.3em 0.5em;
+    padding: 0.4em 0.6em; /* Smaller buttons */
   }
 
   .qty-control .qty-value {
-    min-width: 20px;
-    padding: 0.3em;
+    padding: 0.3em; /* Adjust padding */
+    min-width: 25px; /* Smaller width for quantity */
   }
 
   .delete-button {
-    padding: 0.3em 0.5em;
-    font-size: 0.8em;
-    min-width: 35px;
+    padding: 0.4em 0.6em; /* Smaller delete button */
+    font-size: 0.9em; /* Adjust icon size */
+  }
+
+  .delete-button svg {
+    width: 20px; /* Smaller icon */
+    height: 20px;
   }
 
   .summary-card h2 {
-    font-size: 0.9em;
-    margin-bottom: 0.3em;
+    font-size: 1em; /* Smaller summary header */
+    margin-bottom: 0.4em;
   }
 
   .summary-row {
-    font-size: 0.8em;
-    padding: 0.3em 0;
+    font-size: 0.85em; /* Smaller summary text */
+    padding: 0.4em 0; /* Reduce padding */
   }
 
   .summary-row.total {
-    font-size: 0.95em;
-    padding-top: 0.3em;
+    font-size: 1em; /* Slightly smaller total */
+    padding-top: 0.4em;
   }
 
   .checkout-btn {
-    font-size: 0.75em;
-    padding: 0.3em;
+    font-size: 0.8em; /* Smaller button text */
+    padding: 0.4em; /* Smaller padding */
+  }
+}/* Larger screens (tablet and above) */
+@media (min-width: 769px) {
+  .cart-page {
+    grid-template-columns: 2fr 1fr; /* Restore two-column layout */
+  }
+
+  .cart-page h1 {
+    grid-column: span 2; /* Span both columns on desktop */
+    font-size: 2.2em;
   }
 }
 
-/* Small to medium mobile screens (361px–412px, e.g., iPhone XR) */
-@media (min-width: 361px) and (max-width: 412px) {
+@media (max-width: 412px) {
+  /* Previous styles unchanged */
   .cart-page {
     margin: 0.5em;
     padding: 0.4em;
     gap: 0.8em;
     max-width: 100%;
     box-sizing: border-box;
-  }
-
-  .cart-items,
-  .summary-card {
-    padding: 0.6em;
-    border-radius: 8px;
-  }
-
-  .cart-page h1 {
-    font-size: 1.5em;
-    padding: 0 0.3em;
-    line-height: 1.1em;
   }
 
   .cart-item {
@@ -416,7 +413,6 @@
   .item-info {
     flex-direction: row;
     gap: 0.5em;
-    flex: 1 1 120px;
     width: 100%;
   }
 
@@ -427,6 +423,7 @@
   }
 
   .item-details {
+    flex: 1;
     max-width: calc(100% - 50px);
   }
 
@@ -446,39 +443,42 @@
     padding: 0.2em 0.5em;
   }
 
+  /* Updated qty-controls to fix overlap */
   .qty-controls {
     flex-direction: row;
-    gap: 0.8em;
-    flex-wrap: wrap;
+    gap: 0.8em; /* Increased gap to separate qty-control and delete-button */
     width: 100%;
     justify-content: space-between;
-    padding: 0 0.2em;
+    align-items: center;
+    padding: 0 0.2em; /* Add slight padding to prevent edge alignment */
   }
 
   .qty-control {
-    width: 90px;
-    min-width: 80px;
-    font-size: 0.85em;
-    border-radius: 6px;
+    width: 90px; /* Slightly reduced width to accommodate gap */
+    font-size: 0.85em; /* Smaller font for better fit */
+    border-radius: 6px; /* Slightly smaller border-radius */
   }
 
   .qty-control button {
-    padding: 0.3em 0.5em;
+    padding: 0.3em 0.5em; /* Reduced padding for compact buttons */
   }
 
   .qty-control .qty-value {
-    min-width: 20px;
     padding: 0.3em;
+    min-width: 20px; /* Reduced to fit narrower viewport */
   }
 
   .delete-button {
-    padding: 0.3em 0.5em;
+    padding: 0.3em 0.5em; /* Smaller padding to avoid overlap */
     font-size: 0.85em;
-    margin-left: 0.5em;
-    border-radius: 6px;
-    min-width: 40px;
+    margin-left: 0.5em; /* Add margin to ensure separation */
+    border-radius: 6px; /* Match qty-control border-radius */
+    flex-shrink: 0; /* Prevent shrinking */
   }
 
+  
+
+  /* Summary card styles unchanged */
   .summary-card h2 {
     font-size: 1em;
     margin-bottom: 0.4em;
@@ -497,97 +497,5 @@
   .checkout-btn {
     font-size: 0.8em;
     padding: 0.4em;
-  }
-}
-
-/* Larger screens (tablet and above, ≥769px) */
-@media (min-width: 769px) {
-  .cart-page {
-    grid-template-columns: 2fr 1fr;
-  }
-
-  .cart-page h1 {
-    grid-column: span 2;
-    font-size: 2.2em;
-  }
-
-  .cart-items {
-    padding: 1.5em;
-  }
-
-  .cart-item {
-    flex-direction: row;
-    align-items: center;
-    gap: 1em;
-  }
-
-  .item-info {
-    flex: 1 1 150px;
-  }
-
-  .item-info img {
-    width: 60px;
-    height: 60px;
-  }
-
-  .item-details span {
-    font-size: 0.95em;
-  }
-
-  .item-price {
-    font-size: 0.9em;
-  }
-
-  .stock-status {
-    font-size: 0.8em;
-    padding: 0.25em 0.7em;
-  }
-
-  .qty-controls {
-    flex-wrap: nowrap;
-    width: auto;
-  }
-
-  .qty-control {
-    width: 120px;
-    min-width: 100px;
-    font-size: 1em;
-  }
-
-  .qty-control button {
-    padding: 0.5em 0.8em;
-  }
-
-  .qty-control .qty-value {
-    min-width: 30px;
-  }
-
-  .delete-button {
-    padding: 0.5em 0.8em;
-    font-size: 1em;
-    margin-left: 0;
-  }
-
-  .summary-card {
-    padding: 1.5em;
-  }
-
-  .summary-card h2 {
-    font-size: 1.3em;
-  }
-
-  .summary-row {
-    font-size: 1em;
-    padding: 0.7em 0;
-  }
-
-  .summary-row.total {
-    font-size: 1.2em;
-    padding-top: 1em;
-  }
-
-  .checkout-btn {
-    font-size: 0.9em;
-    padding: 0.6em;
   }
 }
