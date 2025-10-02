@@ -224,7 +224,7 @@ const Product = () => {
                   sm:w-[calc(24%-1px)]
                   px-1 
                   bg-white rounded-lg shadow-md overflow-hidden relative
-                  transition-transform duration-300 hover:-translate-y-1
+                  transition-transform duration-300 hover:-translate-y-1 mt-2 mb-2
                 "
               >
                 {product.badge && (

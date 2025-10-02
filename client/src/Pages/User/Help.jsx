@@ -21,7 +21,7 @@ const Help = () => {
     <div className="font-poppins">
 
       {/* Hero Section */}
-      <header className="bg-gray-100 min-h-screen flex flex-col justify-center items-center text-center px-4">
+      <header className="bg-gray-100 sm:min-h-screen flex flex-col justify-center items-center text-center px-4">
         <h1 className="font-playfair text-5xl font-semibold text-gray-800">Organic SkinCare</h1>
         <h2 className="text-2xl mt-4 text-gray-600">Glow Naturally Every Day</h2>
         <p className="mt-2 text-gray-500">Pure • Organic • Dermatologist Approved</p>

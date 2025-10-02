@@ -31,6 +31,16 @@ export const ProductSlider = () => {
 
   if (loading) return <p className="text-center py-6">Loading cart...</p>;
 
+  // Show empty message if no items
+  if (cartItems.length === 0) {
+    return (
+      <div className="w-full max-w-5xl mb-8 p-6 bg-white rounded-2xl shadow-md text-center">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">My Cart</h2>
+        <p className="text-gray-500">Your Cart is Empty</p>
+      </div>
+    );
+  }
+
   const totalPrice = cartItems.reduce(
     (total, item) => total + (item.product?.new_price || item.product?.price) * item.quantity,
     0
