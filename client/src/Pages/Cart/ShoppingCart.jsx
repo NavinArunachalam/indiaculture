@@ -101,44 +101,34 @@ const Cart = () => {
       }).showToast();
     }
   };
-const handleDelete = async (productId) => {
-  setRemovingItemId(productId);
 
-  const cartContainer = document.querySelector(".cart-items");
-  cartContainer.classList.add("deleting"); // temporarily disable gap
-
-  try {
-    await axios.delete(`${API_URL}/api/cart/${productId}`, {
-      withCredentials: true,
-    });
-
-    // Wait for CSS transition (250ms)
-    setTimeout(() => {
+  const handleDelete = async (productId) => {
+    setRemovingItemId(productId);
+    try {
+      await axios.delete(`${API_URL}/api/cart/${productId}`, {
+        withCredentials: true,
+      });
       setCartItems((prev) => prev.filter((i) => i.product._id !== productId));
-      cartContainer.classList.remove("deleting");
-    }, 250);
-
-    Toastify({
-      text: "Item removed from cart",
-      duration: 2000,
-      gravity: "bottom",
-      position: "center",
-      backgroundColor: "#16a34a",
-    }).showToast();
-  } catch (err) {
-    console.error("Failed to remove item:", err);
-    Toastify({
-      text: "Failed to remove item",
-      duration: 2000,
-      gravity: "bottom",
-      position: "center",
-      backgroundColor: "#dc2626",
-    }).showToast();
-    cartContainer.classList.remove("deleting");
-  } finally {
-    setRemovingItemId(null);
-  }
-};
+      Toastify({
+        text: "Item removed from cart",
+        duration: 2000,
+        gravity: "bottom",
+        position: "center",
+        backgroundColor: "#16a34a",
+      }).showToast();
+    } catch (err) {
+      console.error("Failed to remove item:", err);
+      Toastify({
+        text: "Failed to remove item",
+        duration: 2000,
+        gravity: "bottom",
+        position: "center",
+        backgroundColor: "#dc2626",
+      }).showToast();
+    } finally {
+      setRemovingItemId(null);
+    }
+  };
 
   const handleCheckout = async () => {
     if (!user || !user._id) {
@@ -290,7 +280,7 @@ const handleDelete = async (productId) => {
                 className="delete-button"
                 onClick={() => handleDelete(item.product._id)}
               >
-                <MdDelete size={26} />
+                <MdDelete size={28} />
               </button>
             </div>
           </div>
