@@ -9,7 +9,7 @@
   gap: 1em;
   position: relative;
   border-radius: 8px;
-  overflow-x: hidden;
+  overflow: hidden; /* Changed to hidden for both x and y to prevent unintended clipping */
 }
 
 .review-page-wrapper::before {
@@ -20,7 +20,7 @@
   width: 100%;
   height: 100%;
   background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(3px); /* Reduced blur for performance */
   z-index: 0;
   border-radius: 8px;
 }
@@ -32,7 +32,7 @@
 
 .review-bg {
   background: url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80") no-repeat center/cover;
-  filter: blur(4px);
+  filter: blur(3px); /* Reduced blur for performance */
   position: fixed;
   top: 0;
   left: 0;
@@ -70,7 +70,6 @@
   -webkit-text-fill-color: transparent;
   line-height: 1.3em;
   padding: 0 0.3em;
-  white-space: normal;
 }
 
 /* --- Address Card --- */
@@ -97,7 +96,7 @@
 /* --- Cart Items --- */
 .cart-items {
   background: #fff;
-  padding: 1px; /* Reduced padding */
+  padding: 0.5em; /* Consistent padding */
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -106,9 +105,9 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 0.5em 0; /* Reduced padding */
+  padding: 0.5em 0;
   border-bottom: 1px solid #eee;
-  gap: 0.4em; /* Tighter gap */
+  gap: 0.5em; /* Consistent gap */
 }
 
 .cart-item:last-child {
@@ -118,13 +117,13 @@
 .item-info {
   display: flex;
   align-items: center;
-  gap: 0.6em; /* Reduced gap */
+  gap: 0.6em;
   width: 100%;
   min-width: 0;
 }
 
 .item-info img {
-  width: 45px; /* Smaller image */
+  width: 45px;
   height: 45px;
   object-fit: cover;
   border-radius: 6px;
@@ -140,9 +139,9 @@
 }
 
 .item-details span {
-  font-size: 10px;
+  font-size: 0.9em; /* Slightly larger for readability */
   font-weight: 500;
-  margin-bottom: 0.1em; /* Reduced margin */
+  margin-bottom: 0.1em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -200,7 +199,7 @@
   color: #fff;
   text-decoration: none;
   font-size: 0.9em;
-  transition: 0.2s;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .place-order-btn:hover {
@@ -216,95 +215,219 @@
   box-shadow: none;
 }
 
-/* --- Mobile / Responsive (412px and below) --- */
+/* --- Mobile (≤412px) --- */
 @media (max-width: 412px) {
   .review-page-wrapper {
-    margin: 0.4em;
-    padding: 0.4em;
+    margin: 0.5em; /* Slightly more margin for breathing room */
+    padding: 0.5em;
   }
 
   .review-page {
-    gap: 0.6em; /* Tighter gap */
+    gap: 0.5em; /* Consistent gap */
   }
 
   .review-page h1 {
-    font-size: 1.3em; /* Slightly smaller */
-    margin: 0.3em 0;
+    font-size: 1.4em; /* Slightly larger for readability */
+    margin: 0.4em 0;
     padding: 0 0.2em;
   }
 
   .address-card {
-    padding: 0.6em; /* Reduced padding */
+    padding: 0.8em; /* Balanced padding */
   }
 
   .address-card h2 {
-    font-size: 0.95em;
+    font-size: 1em;
   }
 
   .address-card p {
-    font-size: 0.75em;
+    font-size: 0.8em;
   }
 
   .cart-items {
-    padding:0; /* Further reduced padding */
+    padding: 0.3em; /* Minimal but non-zero padding */
   }
 
   .cart-item {
-    padding:0; /* Further reduced padding */
-    gap: 0.3em; /* Tighter gap */
+    padding: 0.4em 0; /* Minimal padding */
+    gap: 0.4em;
   }
 
   .item-info {
-    gap: 0.5em; /* Tighter gap */
+    gap: 0.5em;
   }
 
   .item-info img {
-    width: 80px; /* Smaller image */
-    height: 80px;
+    width: 40px; /* Smaller for mobile */
+    height: 40px;
   }
 
   .item-details span {
-    font-size: 1em; /* Smaller font */
+    font-size: 0.85em;
   }
 
   .item-price {
-    font-size: 0.7em;
+    font-size: 0.75em;
   }
 
   .summary-card {
-    padding: 0.6em; /* Reduced padding */
+    padding: 0.8em;
   }
 
   .summary-card h2 {
-    font-size: 0.95em;
+    font-size: 1em;
   }
 
   .summary-row {
-    font-size: 0.8em;
-    padding: 0.4em 0;
+    font-size: 0.85em;
+    padding: 0.5em 0;
   }
 
   .summary-row.total {
-    font-size: 0.9em;
+    font-size: 0.95em;
   }
 
   .place-order-btn {
-    padding: 0.6em;
-    font-size: 0.8em;
+    padding: 0.7em;
+    font-size: 0.85em;
+  }
+
+  .review-bg {
+    background-image: url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=60"); /* Lower resolution for mobile */
+    filter: blur(2px); /* Further reduced for performance */
+  }
+
+  .review-page-wrapper::before {
+    backdrop-filter: blur(2px); /* Reduced for performance */
   }
 }
 
-/* --- Desktop / Tablet (unchanged) --- */
+/* --- Tablet (413px–768px) --- */
+@media (min-width: 413px) and (max-width: 768px) {
+  .review-page-wrapper {
+    max-width: 600px; /* Wider for tablets */
+    margin: 1em auto;
+    padding: 0.8em;
+  }
+
+  .review-page {
+    gap: 0.8em;
+  }
+
+  .review-page h1 {
+    font-size: 1.7em; /* Intermediate size */
+  }
+
+  .address-card {
+    padding: 1em;
+  }
+
+  .address-card h2 {
+    font-size: 1.15em;
+  }
+
+  .address-card p {
+    font-size: 0.9em;
+  }
+
+  .cart-items {
+    padding: 0.5em;
+  }
+
+  .cart-item {
+    padding: 0.6em 0;
+    gap: 0.5em;
+  }
+
+  .item-info img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .item-details span {
+    font-size: 0.95em;
+  }
+
+  .item-price {
+    font-size: 0.85em;
+  }
+
+  .summary-card {
+    padding: 1em;
+  }
+
+  .summary-card h2 {
+    font-size: 1.15em;
+  }
+
+  .summary-row {
+    font-size: 0.9em;
+  }
+
+  .summary-row.total {
+    font-size: 1em;
+  }
+
+  .place-order-btn {
+    padding: 0.8em;
+    font-size: 0.9em;
+  }
+}
+
+/* --- Desktop (≥769px) --- */
 @media (min-width: 769px) {
+  .review-page-wrapper {
+    max-width: 900px; /* Wider for desktop */
+    padding: 1em;
+  }
+
   .review-page {
     grid-template-columns: 2fr 1fr;
+    gap: 1.5em; /* More spacious */
   }
+
   .review-page h1 {
     grid-column: span 2;
-    font-size: 2em;
+    font-size: 1.8em; /* Slightly smaller for smoother transition */
   }
+
+  .address-card {
+    padding: 1.2em;
+  }
+
+  .cart-items {
+    padding: 0.8em;
+  }
+
+  .cart-item {
+    padding: 0.8em 0;
+  }
+
+  .item-info img {
+    width: 60px;
+    height: 60px;
+  }
+
   .summary-card {
     position: sticky;
     top: 2em;
+    padding: 1.2em;
+  }
+
+  .summary-card h2 {
+    font-size: 1.2em;
+  }
+
+  .summary-row {
+    font-size: 1em;
+  }
+
+  .summary-row.total {
+    font-size: 1.1em;
+  }
+
+  .place-order-btn {
+    padding: 1em;
+    font-size: 1em;
   }
 }
