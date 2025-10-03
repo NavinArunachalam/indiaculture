@@ -40,7 +40,7 @@ const ProductCard = React.memo(
               {product.offer_line} Launch Offer
             </div>
           )}
-          <p className="text-xs sm:text-sm text-gray-700 mb-1 sm:mb-2 overflow-hidden line-clamp-2">
+          <p className="text-xs sm:text-sm text-gray-700 mb-1 sm:mb-2 overflow-hidden line-clamp-1">
             {product.description}
           </p>
 

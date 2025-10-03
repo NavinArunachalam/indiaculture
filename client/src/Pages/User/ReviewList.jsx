@@ -39,12 +39,18 @@ const Reviews = () => {
     fetchReviews();
   }, []);
 
-  if (loading) return <div className="text-center py-10">Loading Reviews...</div>;
-  if (!reviews.length) return <div className="text-center py-10">No Reviews found.</div>;
+  // Group reviews into pairs for stacking
+  const groupedReviews = [];
+  for (let i = 0; i < reviews.length; i += 2) {
+    groupedReviews.push(reviews.slice(i, i + 2));
+  }
+
+  if (loading) return <div className="text-center py-6 text-sm">Loading Reviews...</div>;
+  if (!reviews.length) return <div className="text-center py-6 text-sm">No Reviews found.</div>;
 
   return (
-    <div className="container px-4 sm:px-6">
-      <h1 className="text-center pt-10 mb-10 font-[Times] text-[#2e5939] text-3xl md:text-4xl leading-[1.08] font-bold">
+    <div className="container px-4 sm:px-6 w-full max-w-full">
+      <h1 className="text-center pt-6 mb-6 font-[Times] text-[#2e5939] text-2xl sm:text-3xl md:text-4xl leading-[1.08] font-bold">
         Customer Reviews
       </h1>
 
@@ -52,46 +58,49 @@ const Reviews = () => {
         modules={[Pagination, Autoplay]}
         pagination={{ clickable: true }}
         autoplay={{ delay: 2500, disableOnInteraction: false }}
-        spaceBetween={20}
-        slidesPerView={2}
-        breakpoints={{
-          1000: { slidesPerView: 3 },
-        }}
+        spaceBetween={10}
+        slidesPerView={1}
         speed={800}
+        className="w-full"
       >
-        {reviews.map((item, index) => (
-          <SwiperSlide key={index} className="pb-12 text-green-900">
-            <div className="bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm min-h-[160px] md:min-h-[160px] flex flex-col p-6">
-              {/* Comment Section */}
-              <div className="flex-grow md:flex-grow-0">
-                <div className="text-left relative flex">
-                  <span className="text-green-700 mr-2">
-                    <FaQuoteLeft className="size-3 sm:size-4 md:size-5" />
-                  </span> <br/>
-                </div>
-                 <p className="text-sm sm:text-sm md:text-base ">
-                    {item.comment}
-                  </p>
-              </div>
+        {groupedReviews.map((pair, index) => (
+          <SwiperSlide key={index} className="pb-8">
+            <div className="flex flex-col space-y-3 w-full">
+              {pair.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm flex flex-col p-4 w-full min-h-[120px] sm:min-h-[140px]"
+                >
+                  {/* Comment Section */}
+                  <div className="flex-grow">
+                    <div className="text-left relative flex">
+                      <span className="text-green-700 mr-1">
+                        <FaQuoteLeft className="size-3 sm:size-4 md:size-5" />
+                    <p className="text-xs sm:text-sm md:text-base pl-5">{item.comment}</p>
+                      </span> 
+                    </div>
+                  </div>
 
-              {/* Stacked Name, Product, and Stars */}
-              <div className=" text-center mt-4 space-y-2">
-                <h3 className="text-sm md:text-base font-semibold text-green-800 truncate">
-                  {item.user?.name || "Anonymous"}
-                </h3>
+                  {/* Stacked Name, Product, and Stars */}
+                  <div className="text-center mt-3 space-y-1">
+                    <h3 className="text-xs sm:text-sm md:text-base font-semibold text-green-800 truncate">
+                      {item.user?.name || "Anonymous"}
+                    </h3>
 
-                <div className="flex justify-center space-x-1 text-yellow-400">
-                  {item.stars.map((s, i) =>
-                    s === 1 ? (
-                      <FaStar key={i} className="size-4 md:size-5" aria-label="Full star" />
-                    ) : s === 0.5 ? (
-                      <FaStarHalfAlt key={i} className="size-4 md:size-5" aria-label="Half star" />
-                    ) : (
-                      <FaRegStar key={i} className="size-4 md:size-5" aria-label="Empty star" />
-                    )
-                  )}
+                    <div className="flex justify-center space-x-1 text-yellow-400">
+                      {item.stars.map((s, i) =>
+                        s === 1 ? (
+                          <FaStar key={i} className="size-3 sm:size-4 md:size-5" aria-label="Full star" />
+                        ) : s === 0.5 ? (
+                          <FaStarHalfAlt key={i} className="size-3 sm:size-4 md:size-5" aria-label="Half star" />
+                        ) : (
+                          <FaRegStar key={i} className="size-3 sm:size-4 md:size-5" aria-label="Empty star" />
+                        )
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </SwiperSlide>
         ))}

@@ -19,57 +19,109 @@ const debounce = (func, wait) => {
   };
 };
 
+// Skeleton loader component
+const ProductCardSkeleton = () => (
+  <div className="w-[150px] h-[320px] bg-white rounded-lg shadow flex flex-col animate-pulse">
+    <div className="w-full h-[150px] bg-gray-200 rounded-t-lg"></div>
+    <div className="p-3 flex flex-col flex-grow">
+      <div className="h-4 bg-gray-200 rounded mb-2"></div>
+      <div className="h-3 bg-gray-200 rounded mb-1"></div>
+      <div className="h-3 bg-gray-200 rounded mb-2"></div>
+      <div className="h-4 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+);
+
 const SkinCare = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
   const [cart, setCart] = useState([]);
+  const [toggling, setToggling] = useState({ wishlist: {}, cart: {} });
 
   useEffect(() => {
     const controller = new AbortController();
+
     const fetchData = async () => {
       try {
         setLoading(true);
+
+        // Fetch products, wishlist, and cart concurrently
         const [productsRes, wishlistRes, cartRes] = await Promise.allSettled([
           axios.get(`${API_URL}/api/products`, { signal: controller.signal }),
-          axios.get(`${API_URL}/api/wishlist`, { withCredentials: true, signal: controller.signal }),
-          axios.get(`${API_URL}/api/cart`, { withCredentials: true, signal: controller.signal }),
+          axios.get(`${API_URL}/api/wishlist`, {
+            withCredentials: true,
+            signal: controller.signal,
+          }),
+          axios.get(`${API_URL}/api/cart`, {
+            withCredentials: true,
+            signal: controller.signal,
+          }),
         ]);
 
-        if (productsRes.status === 'fulfilled') {
-          const faceCareProducts = productsRes.value.data.filter(
-            (p) => p.category?.name === "Face Care"
-          );
+        // Handle products
+        if (productsRes.status === "fulfilled") {
+          const fetchedProducts = productsRes.value.data;
+          console.log("API Products Response:", fetchedProducts);
+          const faceCareProducts = Array.isArray(fetchedProducts)
+            ? fetchedProducts.filter((p) => p.category?.name === "Face Care")
+            : [];
+          console.log("Filtered Face Care Products:", faceCareProducts);
           setProducts(faceCareProducts);
+          // Optional: Cache products (commented out to avoid caching issues)
+          // localStorage.setItem("faceCareProducts", JSON.stringify(faceCareProducts));
+          // localStorage.setItem("faceCareProductsTime", Date.now().toString());
+        } else {
+          console.error("Products fetch failed:", productsRes.reason);
         }
 
-        if (wishlistRes.status === 'fulfilled') {
-          setWishlist(wishlistRes.value.data.map((item) => item.product._id));
+        // Handle wishlist
+        if (wishlistRes.status === "fulfilled") {
+          const wishlistData = wishlistRes.value.data;
+          console.log("Wishlist Response:", wishlistData);
+          setWishlist(
+            Array.isArray(wishlistData)
+              ? wishlistData.map((item) => item.product?._id).filter(Boolean)
+              : []
+          );
         } else {
-          console.log("Wishlist fetch skipped");
+          console.log("Wishlist fetch skipped (user not logged in)");
         }
 
-        if (cartRes.status === 'fulfilled') {
-          setCart(cartRes.value.data.items.map((item) => item.product._id));
+        // Handle cart
+        if (cartRes.status === "fulfilled") {
+          const cartData = cartRes.value.data;
+          console.log("Cart Response:", cartData);
+          setCart(
+            Array.isArray(cartData.items)
+              ? cartData.items.map((item) => item.product?._id).filter(Boolean)
+              : []
+          );
         } else {
-          console.log("Cart fetch skipped");
+          console.log("Cart fetch skipped (user not logged in)");
         }
       } catch (err) {
         if (err.name === "AbortError") return;
-        console.error("Failed to fetch data:", err);
+        console.error("Fetch error:", err.response?.data, err.message);
       } finally {
         setLoading(false);
       }
     };
 
+    // Clear cache to ensure fresh data
+    localStorage.removeItem("faceCareProducts");
+    localStorage.removeItem("faceCareProductsTime");
     fetchData();
 
-    return () => controller.abort(); // Cleanup on unmount
+    return () => controller.abort();
   }, []);
 
-  // Debounced toggleWishlist with optimistic updates
   const toggleWishlist = useCallback(
     debounce(async (productId) => {
+      setToggling((prev) => ({
+        ...prev,
+        wishlist: { ...prev.wishlist, [productId]: true },
+      }));
       const optimistic = wishlist.includes(productId)
         ? wishlist.filter((id) => id !== productId)
         : [...wishlist, productId];
@@ -86,6 +138,7 @@ const SkinCare = () => {
             gravity: "bottom",
             position: "center",
             backgroundColor: "#dc2626",
+            className: "toastify-mobile",
           }).showToast();
         } else {
           await axios.post(
@@ -99,26 +152,53 @@ const SkinCare = () => {
             gravity: "bottom",
             position: "center",
             backgroundColor: "#16a34a",
+            className: "toastify-mobile",
           }).showToast();
         }
       } catch (err) {
-        console.error(err);
-        setWishlist(wishlist); // Revert if failed
+        console.error("Wishlist error:", err);
+        setWishlist(wishlist); // Revert optimistic update
         Toastify({
           text: "Please login to manage wishlist",
           duration: 2000,
           gravity: "bottom",
           position: "center",
           backgroundColor: "#dc2626",
+          className: "toastify-mobile",
         }).showToast();
+      } finally {
+        setToggling((prev) => ({
+          ...prev,
+          wishlist: { ...prev.wishlist, [productId]: false },
+        }));
       }
-    }, 300), // 300ms debounce
+    }, 300),
     [wishlist]
   );
 
-  // Debounced toggleCart with optimistic updates
   const toggleCart = useCallback(
     debounce(async (productId) => {
+      setToggling((prev) => ({
+        ...prev,
+        cart: { ...prev.cart, [productId]: true },
+      }));
+      const product = products.find((p) => p._id === productId);
+      if (product?.stock === 0) {
+        Toastify({
+          text: "Product is out of stock",
+          duration: 2000,
+          gravity: "bottom",
+          position: "center",
+          backgroundColor: "#dc2626",
+          className: "toastify-mobile",
+        }).showToast();
+        setToggling((prev) => ({
+          ...prev,
+          cart: { ...prev.cart, [productId]: false },
+        }));
+        return;
+      }
+
       const optimistic = cart.includes(productId)
         ? cart.filter((id) => id !== productId)
         : [...cart, productId];
@@ -135,6 +215,7 @@ const SkinCare = () => {
             gravity: "bottom",
             position: "center",
             backgroundColor: "#dc2626",
+            className: "toastify-mobile",
           }).showToast();
         } else {
           await axios.post(
@@ -148,44 +229,87 @@ const SkinCare = () => {
             gravity: "bottom",
             position: "center",
             backgroundColor: "#16a34a",
+            className: "toastify-mobile",
           }).showToast();
         }
       } catch (err) {
-        console.error(err);
-        setCart(cart); // Revert if failed
+        console.error("Cart error:", err);
+        setCart(cart); // Revert optimistic update
         Toastify({
           text: "Please login to manage cart",
           duration: 2000,
           gravity: "bottom",
           position: "center",
           backgroundColor: "#dc2626",
+          className: "toastify-mobile",
         }).showToast();
+      } finally {
+        setToggling((prev) => ({
+          ...prev,
+          cart: { ...prev.cart, [productId]: false },
+        }));
       }
-    }, 300), // 300ms debounce
-    [cart]
+    }, 300),
+    [cart, products]
   );
 
-  // Memoize the products list to prevent unnecessary re-renders
   const memoizedProducts = useMemo(() => products, [products]);
 
-  if (loading) return <div className="text-center py-10 text-gray-600 text-lg">Loading Face Care Products...</div>;
-  if (!memoizedProducts.length) return <div className="text-center py-10 text-gray-500 text-lg sm:text-xl">No Face Care Products Available</div>;
+  if (loading) {
+    return (
+      <div className="px-4 py-10">
+        <h2 className="text-center text-2xl font-bold mb-8 text-green-900 font-[times]">
+          Recommended Face Care Solutions
+        </h2>
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={8}
+          slidesPerView={2}
+          loop={true}
+          grabCursor={true}
+          breakpoints={{
+            1280: { slidesPerView: 5, spaceBetween: 20 },
+            1024: { slidesPerView: 5, spaceBetween: 20 },
+            640: { slidesPerView: 5, spaceBetween: 20 },
+            320: { slidesPerView: 2, spaceBetween: 10 },
+          }}
+          className="swiper-container"
+        >
+          {[...Array(5)].map((_, index) => (
+            <SwiperSlide key={index} className="flex items-center justify-center">
+              <ProductCardSkeleton />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </div>
+    );
+  }
+
+  if (!memoizedProducts.length) {
+    console.log("No products to display, products array:", memoizedProducts);
+    return (
+      <div className="text-center py-10 text-gray-500 text-lg sm:text-xl">
+        No Face Care Products Available
+      </div>
+    );
+  }
 
   return (
-    <div className="px-2 sm:px-4 py-10">
-      <h2 className="text-center text-2xl sm:text-4xl font-bold mb-10 relative text-green-900 font-[times]">
-        Recommended Face Care Solution
+    <div className="px-4 py-10">
+      <h2 className="text-center text-2xl font-bold mb-8 text-green-900 font-[times]">
+        Recommended Face Care Solutions
       </h2>
-
       <Swiper
         modules={[Navigation]}
         spaceBetween={8}
         slidesPerView={2}
-        loop={true} // Disable loop for better mobile performance - wait, code has loop=true, but comment says disable? Keeping as is, but can set to false if needed
-        grabCursor={true} // Enable grab cursor for better UX (corrected from false)
+        loop={true}
+        grabCursor={true}
         breakpoints={{
+          1280: { slidesPerView: 5, spaceBetween: 20 },
+          1024: { slidesPerView: 5, spaceBetween: 20 },
           640: { slidesPerView: 5, spaceBetween: 20 },
-          320: { slidesPerView: 2, spaceBetween: 10 }, // Optimize for smaller screens
+          320: { slidesPerView: 2, spaceBetween: 10 },
         }}
         className="swiper-container"
       >
@@ -195,8 +319,11 @@ const SkinCare = () => {
               product={product}
               isWished={wishlist.includes(product._id)}
               inCart={cart.includes(product._id)}
+              isWishlistToggling={toggling.wishlist[product._id] || false}
+              isCartToggling={toggling.cart[product._id] || false}
               toggleWishlist={toggleWishlist}
               toggleCart={toggleCart}
+              className="min-w-[150px]"
             />
           </SwiperSlide>
         ))}

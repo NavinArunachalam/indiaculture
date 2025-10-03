@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-import "./BestSellingProduct.css";
 
 // API URL from environment variable
 const API_URL = import.meta.env.VITE_API_URL;
@@ -20,56 +19,65 @@ const debounce = (func, wait) => {
 
 // Skeleton loader component
 const ProductCardSkeleton = () => (
-  <div className="product-card w-full max-w-[160px] sm:max-w-[200px] bg-white rounded-lg shadow-md flex flex-col animate-pulse">
-    <div className="w-full h-40 sm:h-48 bg-gray-200"></div>
-    <div className="p-2 sm:p-3 flex flex-col flex-grow">
-      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-      <div className="h-3 bg-gray-200 rounded mb-1"></div>
-      <div className="h-3 bg-gray-200 rounded mb-2"></div>
-      <div className="h-4 bg-gray-200 rounded"></div>
+  <div className="w-full bg-white rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex flex-col h-[420px] sm:h-[360px] max-sm:h-[280px] animate-pulse">
+    <div className="skeleton-image h-[200px] sm:h-[140px] max-sm:h-[100px] w-full bg-gray-200"></div>
+    <div className="p-[15px_18px] sm:p-3 max-sm:p-[10px_12px] flex flex-col flex-grow h-[220px] sm:h-[220px] max-sm:h-[180px]">
+      <div className="skeleton-text h-4 bg-gray-200 rounded mb-2 w-3/5"></div>
+      <div className="skeleton-text h-4 bg-gray-200 rounded mb-2"></div>
+      <div className="skeleton-description h-12 sm:h-8 max-sm:h-4 bg-gray-200 rounded mb-4"></div>
+      <div className="flex justify-between items-center sm:flex-col sm:items-start max-sm:flex-col max-sm:items-start sm:gap-2 max-sm:gap-1.5 mt-auto">
+        <div className="skeleton-price h-4 bg-gray-200 rounded w-2/5"></div>
+        <div className="skeleton-button h-[34px] sm:h-[34px] max-sm:h-[30px] w-[100px] sm:w-full max-sm:w-full bg-gray-200 rounded-full"></div>
+      </div>
     </div>
   </div>
 );
 
-// Memoized ProductCard component
+// Custom ProductCard component with Tailwind styles from BestSellingProduct.css
 const ProductCard = React.memo(({ product, inCart, isCartToggling, handleAddToCart }) => (
   <div
-    className={`product-card w-full max-w-[160px] sm:max-w-[200px] bg-white rounded-lg shadow-md flex flex-col transition-transform duration-300 hover:-translate-y-1 ${
+    className={`w-full bg-white rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex flex-col h-[420px] sm:h-[360px] max-sm:h-[280px] transition-transform duration-300 ${
       isCartToggling ? "opacity-50" : ""
     }`}
   >
     <Link to={`/productdetails/${product._id}`}>
-      <div className="product-image w-full h-40 sm:h-48 bg-gray-100 overflow-hidden">
+      <div
+        className="product-image h-[200px] sm:h-[140px] max-sm:h-[100px] sm:aspect-square max-sm:aspect-square bg-gradient-to-b from-[#9fd483] to-[#8dc26f] sm:bg-none max-sm:bg-gray-100 flex items-center justify-center overflow-hidden"
+      >
         <img
-          src={`${product.images?.[0]?.url || "/placeholder.png"}?w=160&format=webp`}
+          src={`${product.images?.[0]?.url || "/placeholder.png"}?w=260&format=webp`}
           alt={product.name}
-          className="w-full h-full object-contain object-center"
+          className="w-full h-full object-contain mx-auto"
           loading="lazy"
           onError={(e) => (e.target.src = "/placeholder.png")}
         />
       </div>
     </Link>
-    <div className="product-details p-2 sm:p-3 flex flex-col flex-grow">
-      <h2 className="product-name text-sm sm:text-base font-semibold truncate">{product.name}</h2>
+    <div className="product-details p-[15px_18px] sm:p-3 max-sm:p-[10px_12px] flex flex-col flex-grow h-[220px] sm:h-[220px] max-sm:h-[180px]">
+      <h2 className="product-name font-serif text-lg sm:text-base max-sm:text-sm mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
+        {product.name}
+      </h2>
       {product.offer_line && (
-        <span className="offer-badge text-xs bg-green-100 text-green-800 rounded px-1 py-0.5">
+        <span className="offer-badge text-green-600 font-semibold text-sm sm:text-[0.9rem] max-sm:text-[0.85rem] mb-2 block">
           {product.offer_line} Launch Offer
         </span>
       )}
-      <p className="product-description text-xs sm:text-sm text-gray-600 truncate">
+      <p className="product-description text-gray-600 leading-tight text-sm sm:text-[0.9rem] max-sm:text-[0.85rem] mb-4 overflow-hidden text-ellipsis line-clamp-3 sm:line-clamp-2 max-sm:line-clamp-1 max-sm:leading-tight flex-grow">
         {product.description}
       </p>
-      <div className="product-footer flex justify-between items-center mt-auto">
-        <div className="price-box">
-          <span className="old-price text-xs text-gray-500 line-through">
+      <div className="product-footer flex justify-between items-center sm:flex-col sm:items-start max-sm:flex-col max-sm:items-start sm:gap-2 max-sm:gap-1.5 mt-auto">
+        <div className="price-box flex items-center gap-1.5">
+          <span className="old-price text-base sm:text-[0.9rem] max-sm:text-[0.85rem] text-gray-500 line-through">
             ₹{product.old_price}
           </span>
-          <span className="current-price text-sm font-bold">₹{product.new_price}</span>
+          <span className="current-price text-lg sm:text-base max-sm:text-[0.95rem] font-bold text-green-700">
+            ₹{product.new_price}
+          </span>
         </div>
         <button
-          className={`add-to-cart text-xs sm:text-sm px-2 py-1 rounded ${
-            inCart ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"
-          } text-white`}
+          className={`add-to-cart bg-green-700 text-white border-none px-4 py-2 sm:px-2 sm:py-2 max-sm:px-1.5 max-sm:py-1.5 rounded-full text-sm sm:text-[0.9rem] max-sm:text-[0.85rem] cursor-pointer transition-colors duration-300 sm:w-full max-sm:w-full ${
+            inCart ? "bg-gray-400" : "hover:bg-green-600"
+          }`}
           onClick={() => handleAddToCart(product._id)}
           disabled={isCartToggling}
         >
@@ -91,71 +99,66 @@ const BestSellingProduct = () => {
   useEffect(() => {
     const controller = new AbortController();
 
-    // Check localStorage for cached data
-    const cachedProducts = localStorage.getItem("bestSellingProducts");
-    const cacheTime = localStorage.getItem("bestSellingProductsTime");
-    if (cachedProducts && cacheTime && Date.now() - parseInt(cacheTime) < 3600000) {
-      try {
-        const parsedProducts = JSON.parse(cachedProducts);
-        if (Array.isArray(parsedProducts)) {
-          setProducts(parsedProducts);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("Invalid cached products:", err);
-        localStorage.removeItem("bestSellingProducts");
-        localStorage.removeItem("bestSellingProductsTime");
-      }
-    }
-
     const fetchData = async () => {
       try {
+        setLoading(true);
+
+        // Fetch categories, products, and cart concurrently
         const [catRes, prodRes, cartRes] = await Promise.allSettled([
           axios.get(`${API_URL}/api/categories`, { signal: controller.signal }),
-          axios.get(`${API_URL}/api/products`, {
-            signal: controller.signal,
-            params: { is_bestsell: true },
-            headers: { "If-Modified-Since": cacheTime || "" },
-          }),
+          axios.get(`${API_URL}/api/products`, { signal: controller.signal }),
           axios.get(`${API_URL}/api/cart`, {
             withCredentials: true,
             signal: controller.signal,
           }),
         ]);
 
+        // Handle categories
         if (catRes.status === "fulfilled") {
           const allCategories = catRes.value.data.map((c) => ({ _id: c._id, name: c.name }));
           setCategories([{ _id: "all", name: "All Products" }, ...allCategories]);
+        } else {
+          console.error("Categories fetch failed:", catRes.reason);
         }
 
+        // Handle products
         if (prodRes.status === "fulfilled") {
-          const bestSellingProducts = prodRes.value.data.filter((p) => p.is_bestsell);
-          if (
-            JSON.stringify(bestSellingProducts) !==
-            JSON.stringify(JSON.parse(cachedProducts || "[]"))
-          ) {
-            setProducts(bestSellingProducts);
-            localStorage.setItem("bestSellingProducts", JSON.stringify(bestSellingProducts));
-            localStorage.setItem("bestSellingProductsTime", Date.now());
-          }
-        } else if (prodRes.status === "rejected" && prodRes.reason.response?.status === 304) {
-          console.log("Products not modified, using cache");
+          const fetchedProducts = prodRes.value.data;
+          console.log("API Products Response:", fetchedProducts);
+          const bestSellingProducts = Array.isArray(fetchedProducts)
+            ? fetchedProducts.filter((p) => p.is_bestsell === true)
+            : [];
+          console.log("Filtered Best Selling Products:", bestSellingProducts);
+          setProducts(bestSellingProducts);
+        } else {
+          console.error("Products fetch failed:", prodRes.reason);
         }
 
+        // Handle cart
         if (cartRes.status === "fulfilled") {
-          setCart(cartRes.value.data.items.map((item) => item.product._id));
+          const cartData = cartRes.value.data;
+          console.log("Cart Response:", cartData);
+          setCart(
+            Array.isArray(cartData.items)
+              ? cartData.items.map((item) => item.product?._id).filter(Boolean)
+              : []
+          );
         } else {
           console.log("Cart fetch skipped (user not logged in)");
         }
       } catch (err) {
         if (err.name === "AbortError") return;
-        console.error("Error fetching data:", err);
+        console.error("Error fetching data:", err.response?.data, err.message);
       } finally {
         setLoading(false);
       }
     };
 
+    // Clear cache to ensure fresh data
+    localStorage.removeItem("bestSellingProducts");
+    localStorage.removeItem("bestSellingProductsTime");
     fetchData();
+
     return () => controller.abort();
   }, []);
 
@@ -209,9 +212,9 @@ const BestSellingProduct = () => {
         }).showToast();
       } catch (err) {
         console.error("Error adding to cart:", err);
-        setCart(cart);
+        setCart(cart); // Revert optimistic update
         Toastify({
-          text: "Please login to add to cart",
+          text: "Please login to manage cart",
           duration: 2000,
           gravity: "bottom",
           position: "center",
@@ -236,50 +239,26 @@ const BestSellingProduct = () => {
     [products, selectedCategory]
   );
 
-  if (loading) {
-    return (
-      <main className="shop-container px-2 sm:px-4 py-10">
-        <div className="shop-header">
-          <h1 className="col-span-2 text-center mb-3 font-[times] text-[#2e5939] leading-[1.08] font-bold capitalize">
-            Best Selling Products
-          </h1>
-          <p>
-            Transform your self-care routine with our carefully curated selection
-            of skin, hair, and wellness products.
-          </p>
-        </div>
-        <div className="products-grid grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          {[...Array(8)].map((_, index) => (
-            <div key={index} className="w-full max-w-[160px] sm:max-w-[200px] mx-auto">
-              <ProductCardSkeleton />
-            </div>
-          ))}
-        </div>
-      </main>
-    );
-  }
-
   return (
-    <main className="shop-container px-2 sm:px-4 py-10">
-      <div className="shop-header">
-        <h1 className="col-span-2 text-center mb-3 font-[times] text-[#2e5939] leading-[1.08] font-bold capitalize">
+    <main className="max-w-7xl mx-auto px-0 sm:p-5 py-10">
+      <div className="text-center mb-5 text-gray-800">
+        <h1 className="text-2xl sm:text-[calc(2rem+1vw)] font-bold mb-3 font-[Times]">
           Best Selling Products
         </h1>
-        <p>
-          Transform your self-care routine with our carefully curated selection
-          of skin, hair, and wellness products.
+        <p className="text-sm sm:text-base opacity-90 max-w-xl mx-auto">
+          Transform your self-care routine with our carefully curated selection of skin, hair, and wellness products.
         </p>
       </div>
 
-      <div className="categories flex flex-wrap gap-2 justify-center mb-6">
+      <div className="flex flex-wrap justify-start sm:justify-center gap-2 sm:gap-3 mb-5 sm:mb-[30px] px-3 sm:px-0">
         {categories.map((cat) => (
           <button
             key={cat._id}
             onClick={() => setSelectedCategory(cat._id)}
-            className={`category-button px-3 py-1 rounded text-sm sm:text-base ${
+            className={`px-3 sm:px-[18px] py-1.5 sm:py-2 rounded-full text-[0.85rem] sm:text-[0.95rem] font-medium border transition-all duration-300 ${
               selectedCategory === cat._id
-                ? "bg-green-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-green-500 border-green-500 text-white"
+                : "bg-gray-100 border-gray-300 text-gray-800 hover:bg-green-500 hover:border-green-500 hover:text-white"
             }`}
           >
             {cat.name}
@@ -287,13 +266,16 @@ const BestSellingProduct = () => {
         ))}
       </div>
 
-      <div className="products-grid grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-        {filteredProducts.length > 0 ? (
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-5 px-3 sm:px-0 mb-10">
+        {loading ? (
+          [...Array(8)].map((_, index) => (
+            <div key={index} className="w-full max-w-[260px] mx-auto">
+              <ProductCardSkeleton />
+            </div>
+          ))
+        ) : filteredProducts.length > 0 ? (
           filteredProducts.map((product) => (
-            <div
-              key={product._id}
-              className="w-full max-w-[160px] sm:max-w-[200px] mx-auto"
-            >
+            <div key={product._id} className="w-full max-w-[260px] mx-auto">
               <ProductCard
                 product={product}
                 inCart={cart.includes(product._id)}
@@ -303,7 +285,7 @@ const BestSellingProduct = () => {
             </div>
           ))
         ) : (
-          <p className="no-products col-span-2 sm:col-span-4 text-center text-gray-500 text-lg">
+          <p className="col-span-2 sm:col-span-2 md:col-span-4 text-center text-gray-500 text-base sm:text-lg">
             No Products Available
           </p>
         )}
