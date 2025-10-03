@@ -1,4 +1,3 @@
-/* Reels.css */
 .reels-social-video-sec,
 .reels-social-video-sec * {
   box-sizing: border-box;
@@ -57,13 +56,11 @@
   background: #000;
 }
 
-.reels-video-card .reels-play-icon {
+.reels-video-card .reels-play-button {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 22px !important;
-  color: #fff !important;
   background-color: rgba(0, 0, 0, 0.6) !important;
   border-radius: 50%;
   cursor: pointer;
@@ -75,22 +72,29 @@
   z-index: 2;
   transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
   pointer-events: auto;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
-.reels-video-card .reels-play-icon.reels-toggling {
+.reels-video-card .reels-play-button.reels-toggling {
   opacity: 0.7;
 }
 
-.reels-video-card .reels-play-icon:hover,
-.reels-video-card .reels-play-icon:focus {
+.reels-video-card .reels-play-button:hover,
+.reels-video-card .reels-play-button:focus {
   background-color: rgba(0, 0, 0, 0.8) !important;
   transform: translate(-50%, -50%) scale(1.1);
   outline: none;
 }
 
-.reels-video-card .reels-play-icon:focus {
+.reels-video-card .reels-play-button:focus {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.reels-video-card .reels-play-svg {
+  width: 24px;
+  height: 24px;
 }
 
 @media (max-width: 640px) {
@@ -99,9 +103,13 @@
     height: 320px;
   }
 
-  .reels-video-card .reels-play-icon {
-    font-size: 18px !important;
+  .reels-video-card .reels-play-button {
     width: 40px;
     height: 40px;
+  }
+
+  .reels-video-card .reels-play-svg {
+    width: 20px;
+    height: 20px;
   }
 }

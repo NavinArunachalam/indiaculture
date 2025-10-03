@@ -1,10 +1,9 @@
-import React, { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./Reels.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Simple debounce utility
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -40,11 +39,8 @@ const Reels = () => {
     };
 
     fetchVideos();
-
     return () => controller.abort();
   }, []);
-
-  const memoizedVideos = useMemo(() => videos, [videos]);
 
   const handleMouseEnter = useCallback(() => {
     videoRowRef.current?.classList.add("reels-paused");
@@ -109,7 +105,7 @@ const Reels = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {memoizedVideos.map((video, index) => (
+        {videos.map((video, index) => (
           <div className="reels-video-card" key={`${video}-${index}`}>
             <video
               src={video}
@@ -121,12 +117,26 @@ const Reels = () => {
               className="reels-video-element"
             />
             {playingIndex !== index && (
-              <div
-                className={`reels-play-icon ${isToggling[index] ? "reels-toggling" : ""}`}
+              <button
+                className={`reels-play-button ${isToggling[index] ? "reels-toggling" : ""}`}
                 onClick={() => togglePlay(index)}
+                aria-label="Play video"
+                style={{ touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
               >
-                &#9658;
-              </div>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="reels-play-svg"
+                >
+                  <path
+                    d="M5 3l16 9-16 9V3z"
+                    fill="#fff"
+                  />
+                </svg>
+              </button>
             )}
           </div>
         ))}
