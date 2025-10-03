@@ -21,8 +21,8 @@ const debounce = (func, wait) => {
 
 // Skeleton loader component
 const ProductCardSkeleton = () => (
-  <div className="w-[140px] sm:w-[180px] h-[300px] sm:h-[340px] bg-white rounded-lg shadow-md flex flex-col animate-pulse">
-    <div className="w-full h-[160px] sm:h-[180px] bg-gray-200 rounded-t-lg"></div>
+  <div className="w-[150px] h-[320px] bg-white rounded-lg shadow flex flex-col animate-pulse">
+    <div className="w-full h-[150px] bg-gray-200 rounded-t-lg"></div>
     <div className="p-3 flex flex-col flex-grow">
       <div className="h-4 bg-gray-200 rounded mb-2"></div>
       <div className="h-3 bg-gray-200 rounded mb-1"></div>
@@ -195,7 +195,7 @@ const HairCare = () => {
         setToggling((prev) => ({
           ...prev,
           cart: { ...prev.cart, [productId]: false },
-        }));
+        });
         return;
       }
 
@@ -257,23 +257,24 @@ const HairCare = () => {
 
   if (loading) {
     return (
-      <div className="px-4 sm:px-6 py-10">
-        <h2 className="text-center text-2xl sm:text-4xl font-bold mb-8 text-green-900 font-[times]">
+      <div className="px-4 py-10">
+        <h2 className="text-center text-2xl font-bold mb-8 text-green-900">
           Recommended Hair Care Solutions
         </h2>
         <Swiper
           modules={[Navigation]}
-          spaceBetween={8}
+          spaceBetween={6}
           slidesPerView={2.2}
           loop={false}
           grabCursor={true}
+          navigation
           breakpoints={{
-            1280: { slidesPerView: 5, spaceBetween: 16 },
-            1024: { slidesPerView: 4, spaceBetween: 12 },
-            640: { slidesPerView: 3, spaceBetween: 10 },
-            320: { slidesPerView: 2.2, spaceBetween: 8 },
+            1280: { slidesPerView: 5, spaceBetween: 12 },
+            1024: { slidesPerView: 4, spaceBetween: 10 },
+            640: { slidesPerView: 3, spaceBetween: 8 },
+            320: { slidesPerView: 2.2, spaceBetween: 6 },
           }}
-          className="swiper-container"
+          className="px-1.5"
         >
           {[...Array(5)].map((_, index) => (
             <SwiperSlide key={index} className="flex items-center justify-center">
@@ -287,31 +288,31 @@ const HairCare = () => {
 
   if (!memoizedProducts.length) {
     return (
-      <div className="text-center py-10 text-gray-500 text-lg sm:text-xl">
+      <div className="text-center py-10 text-gray-500 text-lg">
         No Hair Care Products Available
       </div>
     );
   }
 
   return (
-    <div className="px-4 sm:px-6 py-10">
-      <h2 className="text-center text-2xl sm:text-4xl font-bold mb-8 text-green-900 font-[times]">
+    <div className="px-4 py-10">
+      <h2 className="text-center text-2xl font-bold mb-8 text-green-900">
         Recommended Hair Care Solutions
       </h2>
       <Swiper
         modules={[Navigation]}
-        spaceBetween={8}
+        spaceBetween={6}
         slidesPerView={2.2}
         loop={false}
         grabCursor={true}
         navigation
         breakpoints={{
-          1280: { slidesPerView: 5, spaceBetween: 16 },
-          1024: { slidesPerView: 4, spaceBetween: 12 },
-          640: { slidesPerView: 3, spaceBetween: 10 },
-          320: { slidesPerView: 2.2, spaceBetween: 8 },
+          1280: { slidesPerView: 5, spaceBetween: 12 },
+          1024: { slidesPerView: 4, spaceBetween: 10 },
+          640: { slidesPerView: 3, spaceBetween: 8 },
+          320: { slidesPerView: 2.2, spaceBetween: 6 },
         }}
-        className="swiper-container"
+        className="px-1.5"
       >
         {memoizedProducts.map((product) => (
           <SwiperSlide key={product._id} className="flex items-center justify-center">
