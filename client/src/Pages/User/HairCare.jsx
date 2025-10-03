@@ -272,7 +272,7 @@ const HairCare = () => {
             1280: { slidesPerView: 5, spaceBetween: 6 },
             1024: { slidesPerView: 4, spaceBetween: 6 },
             640: { slidesPerView: 3, spaceBetween: 2},
-            320: { slidesPerView: 2, spaceBetween: 1 },
+            320: { slidesPerView: 2, spaceBetween: 3 },
           }}
           className="px-1.5"
         >
@@ -309,7 +309,7 @@ const HairCare = () => {
           1280: { slidesPerView: 5, spaceBetween: 6 },
           1024: { slidesPerView: 4, spaceBetween: 6 },
           640: { slidesPerView: 3, spaceBetween: 2 },
-          320: { slidesPerView: 2, spaceBetween: 1 },
+          320: { slidesPerView: 2, spaceBetween: 3 },
         }}
         className="px-1.5"
       >
