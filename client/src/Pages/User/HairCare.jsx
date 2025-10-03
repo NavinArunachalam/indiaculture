@@ -194,7 +194,7 @@ const HairCare = () => {
         }).showToast();
         setToggling((prev) => ({
           ...prev,
-          cart: { ...prev.cart, [productId]: false }
+          cart: { ...prev.cart, [productId]: false },
         }));
         return;
       }
@@ -263,18 +263,15 @@ const HairCare = () => {
         </h2>
         <Swiper
           modules={[Navigation]}
-          spaceBetween={6}
+          spaceBetween={8}
           slidesPerView={2}
-          loop={false}
-          grabCursor={false}
-
+          loop={true}
+          grabCursor={true}
           breakpoints={{
-            1280: { slidesPerView: 5, spaceBetween: 6 },
-            1024: { slidesPerView: 4, spaceBetween: 6 },
-            640: { slidesPerView: 3, spaceBetween: 2},
-            320: { slidesPerView: 2, spaceBetween: 3 },
+            640: { slidesPerView: 5, spaceBetween: 20 },
+            320: { slidesPerView: 2, spaceBetween: 10 },
           }}
-          className="px-1.5"
+          className="swiper-container"
         >
           {[...Array(5)].map((_, index) => (
             <SwiperSlide key={index} className="flex items-center justify-center">
@@ -301,17 +298,15 @@ const HairCare = () => {
       </h2>
       <Swiper
         modules={[Navigation]}
-        spaceBetween={6}
-        slidesPerView={2.2}
-        loop={false}
-        grabCursor={false}
+        spaceBetween={8}
+        slidesPerView={2}
+        loop={true}
+        grabCursor={true}
         breakpoints={{
-          1280: { slidesPerView: 5, spaceBetween: 6 },
-          1024: { slidesPerView: 4, spaceBetween: 6 },
-          640: { slidesPerView: 3, spaceBetween: 2 },
-          320: { slidesPerView: 2, spaceBetween: 3 },
+          640: { slidesPerView: 5, spaceBetween: 20 },
+          320: { slidesPerView: 2, spaceBetween: 10 },
         }}
-        className="px-1.5"
+        className="swiper-container"
       >
         {memoizedProducts.map((product) => (
           <SwiperSlide key={product._id} className="flex items-center justify-center">
