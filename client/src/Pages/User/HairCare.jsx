@@ -264,15 +264,15 @@ const HairCare = () => {
         <Swiper
           modules={[Navigation]}
           spaceBetween={6}
-          slidesPerView={2.2}
+          slidesPerView={2}
           loop={false}
           grabCursor={false}
 
           breakpoints={{
             1280: { slidesPerView: 5, spaceBetween: 6 },
             1024: { slidesPerView: 4, spaceBetween: 6 },
-            640: { slidesPerView: 3, spaceBetween: 6 },
-            320: { slidesPerView: 2, spaceBetween: 2 },
+            640: { slidesPerView: 3, spaceBetween: 2},
+            320: { slidesPerView: 2, spaceBetween: 1 },
           }}
           className="px-1.5"
         >
@@ -308,8 +308,8 @@ const HairCare = () => {
         breakpoints={{
           1280: { slidesPerView: 5, spaceBetween: 6 },
           1024: { slidesPerView: 4, spaceBetween: 6 },
-          640: { slidesPerView: 3, spaceBetween: 6 },
-          320: { slidesPerView: 2, spaceBetween:2 },
+          640: { slidesPerView: 3, spaceBetween: 2 },
+          320: { slidesPerView: 2, spaceBetween: 1 },
         }}
         className="px-1.5"
       >

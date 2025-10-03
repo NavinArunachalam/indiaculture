@@ -3,92 +3,83 @@ import { Link } from "react-router-dom";
 import { FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 
 const ProductCard = React.memo(
-  ({ product, isWished, inCart, isWishlistToggling, isCartToggling, toggleWishlist, toggleCart }) => {
+  ({ product, isWished, inCart, toggleWishlist, toggleCart }) => {
     return (
-      <article className="w-[150px] h-[320px] bg-white rounded-lg shadow flex flex-col overflow-hidden">
-        {/* Best Sell Badge */}
+      <div className="bg-white rounded-lg shadow-md overflow-hidden relative transition-transform duration-300 hover:-translate-y-1">
         {product.is_bestsell && (
-          <div className="absolute top-2 left-0 bg-green-600 text-white px-2 py-1 text-xs font-bold rounded-r">
+          <div className="absolute top-2 left-0 bg-green-600 text-white px-2 sm:px-3 py-1 sm:py-1.5 text-xs font-bold rounded-r">
             Best Sell
           </div>
         )}
 
-        {/* Image Container */}
-        <Link to={`/productdetails/${product._id}`} className="block w-full h-[150px] bg-gray-100">
-          <img
-            src={product.images?.[0]?.url || "/placeholder.jpg"}
-            alt={product.name || "Hair care product"}
-            className="w-full h-full object-cover object-center"
-            loading="lazy"
-          />
+        <Link to={`/productdetails/${product._id}`}>
+          <div className="flex items-center justify-center h-32 sm:h-48 bg-gray-100">
+            <img
+              src={product.images?.[0]?.url || "/placeholder.jpg"}
+              alt={product.name}
+              className="max-w-full max-h-24 sm:max-h-44 object-contain"
+              loading="lazy"
+            />
+          </div>
         </Link>
 
-        {/* Content Container */}
-        <div className="p-3 flex flex-col flex-grow">
-          {/* Category */}
-          <span className="text-xs text-gray-500 uppercase font-semibold truncate">
+        <div className="p-3 sm:p-4">
+          <span className="text-xs sm:text-sm text-gray-500 uppercase font-bold">
             {product.category?.name || "Hair Care"}
           </span>
-
-          {/* Product Name */}
-          <h4 className="my-1 text-sm font-semibold truncate">
+          <h4 className="my-2 sm:my-3 text-sm sm:text-base">
             <Link
               to={`/productdetails/${product._id}`}
-              className="text-gray-800 no-underline hover:text-green-600"
+              className="text-gray-800 no-underline hover:text-green-600 transition-colors"
             >
               {product.name}
             </Link>
           </h4>
-
-          {/* Offer Line */}
           {product.offer_line && (
-            <div className="text-green-600 font-semibold text-xs truncate">
-              {product.offer_line}
+            <div className="text-green-600 font-semibold text-xs sm:text-sm mb-2">
+              {product.offer_line} Launch Offer
             </div>
           )}
-
-          {/* Description */}
-          <p className="text-xs text-gray-700  truncate">
-            {product.description || "No description available"}
+          <p className="text-xs sm:text-sm text-gray-700 mb-1 sm:mb-2 overflow-hidden line-clamp-2">
+            {product.description}
           </p>
 
-          {/* Price and Actions */}
-          <div className="mt-auto flex justify-between items-center">
-            <div className="text-base text-green-600 font-bold">
+          <div className="flex justify-between items-center">
+            <div className="text-base sm:text-lg text-green-600 font-bold">
               {product.old_price && (
-                <small className="text-xs text-gray-500 line-through mr-1">
+                <small className="text-xs sm:text-sm text-gray-500 line-through mr-1 sm:mr-2">
                   ₹{product.old_price}
                 </small>
               )}
               ₹{product.new_price}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 sm:gap-3">
               <button
                 onClick={() => toggleWishlist(product._id)}
-                disabled={isWishlistToggling}
-                className="bg-transparent border-none disabled:opacity-50"
-                aria-label={isWished ? "Remove from wishlist" : "Add to wishlist"}
+                className="bg-transparent border-none cursor-pointer"
               >
                 {isWished ? (
-                  <FaHeart className="text-green-800 text-base" />
+                  <FaHeart className="text-green-800 text-xl sm:text-lg" />
                 ) : (
-                  <FaRegHeart className="text-gray-400 text-base hover:text-green-800" />
+                  <FaRegHeart className="text-gray-400 text-xl sm:text-lg hover:text-green-800 transition" />
                 )}
               </button>
               <button
                 onClick={() => toggleCart(product._id)}
-                disabled={isCartToggling || product.stock === 0}
-                className="bg-transparent border-none disabled:opacity-50"
-                aria-label={inCart ? "Remove from cart" : "Add to cart"}
+                className="bg-transparent border-none cursor-pointer"
               >
                 <FaShoppingCart
-                  className={`text-base ${inCart ? "text-green-800" : "text-gray-400 hover:text-green-800"}`}
+                  className={`text-xl sm:text-lg ${
+                    inCart
+                      ? "text-green-800"
+                      : "text-gray-400 hover:text-green-800 transition"
+                  }`}
                 />
               </button>
             </div>
           </div>
         </div>
-      </article>
+      </div>
     );
   }
 );
