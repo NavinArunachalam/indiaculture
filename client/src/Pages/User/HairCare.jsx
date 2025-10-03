@@ -42,37 +42,13 @@ const HairCare = () => {
   useEffect(() => {
     const controller = new AbortController();
 
-    // Check localStorage for cached data
-    const cachedProducts = localStorage.getItem("hairCareProducts");
-    const cacheTime = localStorage.getItem("hairCareProductsTime");
-    console.log("Cached Products:", cachedProducts);
-    console.log("Cache Time:", cacheTime);
-    if (cachedProducts && cacheTime && Date.now() - parseInt(cacheTime) < 3600000) {
-      try {
-        const parsedProducts = JSON.parse(cachedProducts);
-        if (Array.isArray(parsedProducts) && parsedProducts.length > 0) {
-          setProducts(parsedProducts);
-          setLoading(false);
-        } else {
-          console.warn("Cached products empty or invalid, fetching fresh data");
-          localStorage.removeItem("hairCareProducts");
-          localStorage.removeItem("hairCareProductsTime");
-        }
-      } catch (err) {
-        console.error("Invalid cached products:", err);
-        localStorage.removeItem("hairCareProducts");
-        localStorage.removeItem("hairCareProductsTime");
-      }
-    }
-
     const fetchData = async () => {
       try {
+        setLoading(true);
+
+        // Fetch products, wishlist, and cart concurrently
         const [productsRes, wishlistRes, cartRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/api/products`, {
-            signal: controller.signal,
-            params: { category: "Hair Care" },
-            headers: { "If-Modified-Since": cacheTime || "" },
-          }),
+          axios.get(`${API_URL}/api/products`, { signal: controller.signal }), // Removed category param
           axios.get(`${API_URL}/api/wishlist`, {
             withCredentials: true,
             signal: controller.signal,
@@ -83,46 +59,61 @@ const HairCare = () => {
           }),
         ]);
 
+        // Handle products
         if (productsRes.status === "fulfilled") {
-          const hairCareProducts = productsRes.value.data.filter(
-            (p) => p.category?.name === "Hair Care"
-          );
-          console.log("API Response:", productsRes.value.data);
+          const fetchedProducts = productsRes.value.data;
+          console.log("API Products Response:", fetchedProducts);
+          // Filter client-side like the previous version
+          const hairCareProducts = Array.isArray(fetchedProducts)
+            ? fetchedProducts.filter((p) => p.category?.name === "Hair Care")
+            : [];
           console.log("Filtered Hair Care Products:", hairCareProducts);
-          if (
-            JSON.stringify(hairCareProducts) !==
-            JSON.stringify(JSON.parse(cachedProducts || "[]"))
-          ) {
-            setProducts(hairCareProducts);
-            localStorage.setItem("hairCareProducts", JSON.stringify(hairCareProducts));
-            localStorage.setItem("hairCareProductsTime", Date.now());
-          }
-        } else if (productsRes.status === "rejected" && productsRes.reason.response?.status === 304) {
-          console.log("Products not modified, using cache");
+          setProducts(hairCareProducts);
+          // Optional: Cache products (commented out to avoid caching issues)
+          // localStorage.setItem("hairCareProducts", JSON.stringify(hairCareProducts));
+          // localStorage.setItem("hairCareProductsTime", Date.now().toString());
+        } else {
+          console.error("Products fetch failed:", productsRes.reason);
         }
 
+        // Handle wishlist
         if (wishlistRes.status === "fulfilled") {
-          console.log("Wishlist Response:", wishlistRes.value.data);
-          setWishlist(wishlistRes.value.data.map((item) => item.product._id));
+          const wishlistData = wishlistRes.value.data;
+          console.log("Wishlist Response:", wishlistData);
+          setWishlist(
+            Array.isArray(wishlistData)
+              ? wishlistData.map((item) => item.product?._id).filter(Boolean)
+              : []
+          );
         } else {
-          console.error("Wishlist fetch failed:", wishlistRes.reason);
+          console.log("Wishlist fetch skipped (user not logged in)");
         }
 
+        // Handle cart
         if (cartRes.status === "fulfilled") {
-          console.log("Cart Response:", cartRes.value.data);
-          setCart(cartRes.value.data.items.map((item) => item.product._id));
+          const cartData = cartRes.value.data;
+          console.log("Cart Response:", cartData);
+          setCart(
+            Array.isArray(cartData.items)
+              ? cartData.items.map((item) => item.product?._id).filter(Boolean)
+              : []
+          );
         } else {
-          console.error("Cart fetch failed:", cartRes.reason);
+          console.log("Cart fetch skipped (user not logged in)");
         }
       } catch (err) {
         if (err.name === "AbortError") return;
-        console.error("Error details:", err.response?.data, err.message);
+        console.error("Fetch error:", err.response?.data, err.message);
       } finally {
         setLoading(false);
       }
     };
 
+    // Clear cache to ensure fresh data
+    localStorage.removeItem("hairCareProducts");
+    localStorage.removeItem("hairCareProductsTime");
     fetchData();
+
     return () => controller.abort();
   }, []);
 
@@ -166,8 +157,8 @@ const HairCare = () => {
           }).showToast();
         }
       } catch (err) {
-        console.error(err);
-        setWishlist(wishlist);
+        console.error("Wishlist error:", err);
+        setWishlist(wishlist); // Revert optimistic update
         Toastify({
           text: "Please login to manage wishlist",
           duration: 2000,
@@ -243,8 +234,8 @@ const HairCare = () => {
           }).showToast();
         }
       } catch (err) {
-        console.error(err);
-        setCart(cart);
+        console.error("Cart error:", err);
+        setCart(cart); // Revert optimistic update
         Toastify({
           text: "Please login to manage cart",
           duration: 2000,
@@ -284,7 +275,6 @@ const HairCare = () => {
             320: { slidesPerView: 2, spaceBetween: 10 },
           }}
           className="swiper-container"
-          onSwiper={(swiper) => console.log("Swiper initialized:", swiper)}
         >
           {[...Array(5)].map((_, index) => (
             <SwiperSlide key={index} className="flex items-center justify-center">
@@ -323,7 +313,6 @@ const HairCare = () => {
           320: { slidesPerView: 2, spaceBetween: 10 },
         }}
         className="swiper-container"
-        onSwiper={(swiper) => console.log("Swiper initialized:", swiper)}
       >
         {memoizedProducts.map((product) => (
           <SwiperSlide key={product._id} className="flex items-center justify-center">
