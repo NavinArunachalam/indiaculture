@@ -21,9 +21,9 @@ const debounce = (func, wait) => {
 
 // Skeleton loader component
 const ProductCardSkeleton = () => (
-  <div className="w-full max-w-[160px] sm:max-w-[200px] bg-white rounded-lg shadow-md flex flex-col animate-pulse">
-    <div className="w-full h-40 sm:h-48 bg-gray-200"></div>
-    <div className="p-2 sm:p-3 flex flex-col flex-grow">
+  <div className="w-[140px] sm:w-[180px] h-[300px] sm:h-[340px] bg-white rounded-lg shadow-md flex flex-col animate-pulse">
+    <div className="w-full h-[160px] sm:h-[180px] bg-gray-200 rounded-t-lg"></div>
+    <div className="p-3 flex flex-col flex-grow">
       <div className="h-4 bg-gray-200 rounded mb-2"></div>
       <div className="h-3 bg-gray-200 rounded mb-1"></div>
       <div className="h-3 bg-gray-200 rounded mb-2"></div>
@@ -116,7 +116,6 @@ const HairCare = () => {
     return () => controller.abort();
   }, []);
 
-  // Debounced toggleWishlist
   const toggleWishlist = useCallback(
     debounce(async (productId) => {
       setToggling((prev) => ({
@@ -177,7 +176,6 @@ const HairCare = () => {
     [wishlist]
   );
 
-  // Debounced toggleCart
   const toggleCart = useCallback(
     debounce(async (productId) => {
       setToggling((prev) => ({
@@ -255,32 +253,31 @@ const HairCare = () => {
     [cart, products]
   );
 
-  // Memoize products
   const memoizedProducts = useMemo(() => products, [products]);
 
   if (loading) {
     return (
-      <div className="px-2 sm:px-4 py-10">
-        <h2 className="text-center text-2xl sm:text-4xl font-bold mb-10 relative text-green-900 font-[times]">
-          Recommended Hair Care Solution
+      <div className="px-4 sm:px-6 py-10">
+        <h2 className="text-center text-2xl sm:text-4xl font-bold mb-8 text-green-900 font-[times]">
+          Recommended Hair Care Solutions
         </h2>
         <Swiper
           modules={[Navigation]}
-          spaceBetween={10}
-          slidesPerView={2}
+          spaceBetween={8}
+          slidesPerView={2.2}
           loop={false}
           grabCursor={true}
           breakpoints={{
-            640: { slidesPerView: 5, spaceBetween: 20 },
-            320: { slidesPerView: 2, spaceBetween: 10 },
+            1280: { slidesPerView: 5, spaceBetween: 16 },
+            1024: { slidesPerView: 4, spaceBetween: 12 },
+            640: { slidesPerView: 3, spaceBetween: 10 },
+            320: { slidesPerView: 2.2, spaceBetween: 8 },
           }}
           className="swiper-container"
         >
-          {[...Array(4)].map((_, index) => (
+          {[...Array(5)].map((_, index) => (
             <SwiperSlide key={index} className="flex items-center justify-center">
-              <div className="w-full max-w-[160px] sm:max-w-[200px]">
-                <ProductCardSkeleton />
-              </div>
+              <ProductCardSkeleton />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -297,35 +294,36 @@ const HairCare = () => {
   }
 
   return (
-    <div className="px-2 sm:px-4 py-10">
-      <h2 className="text-center text-2xl sm:text-4xl font-bold mb-10 relative text-green-900 font-[times]">
-        Recommended Hair Care Solution
+    <div className="px-4 sm:px-6 py-10">
+      <h2 className="text-center text-2xl sm:text-4xl font-bold mb-8 text-green-900 font-[times]">
+        Recommended Hair Care Solutions
       </h2>
       <Swiper
         modules={[Navigation]}
-        spaceBetween={10}
-        slidesPerView={2}
+        spaceBetween={8}
+        slidesPerView={2.2}
         loop={false}
         grabCursor={true}
+        navigation
         breakpoints={{
-          640: { slidesPerView: 5, spaceBetween: 20 },
-          320: { slidesPerView: 2, spaceBetween: 10 },
+          1280: { slidesPerView: 5, spaceBetween: 16 },
+          1024: { slidesPerView: 4, spaceBetween: 12 },
+          640: { slidesPerView: 3, spaceBetween: 10 },
+          320: { slidesPerView: 2.2, spaceBetween: 8 },
         }}
         className="swiper-container"
       >
         {memoizedProducts.map((product) => (
           <SwiperSlide key={product._id} className="flex items-center justify-center">
-            <div className="w-full max-w-[160px] sm:max-w-[200px]">
-              <ProductCard
-                product={product}
-                isWished={wishlist.includes(product._id)}
-                inCart={cart.includes(product._id)}
-                isWishlistToggling={toggling.wishlist[product._id] || false}
-                isCartToggling={toggling.cart[product._id] || false}
-                toggleWishlist={toggleWishlist}
-                toggleCart={toggleCart}
-              />
-            </div>
+            <ProductCard
+              product={product}
+              isWished={wishlist.includes(product._id)}
+              inCart={cart.includes(product._id)}
+              isWishlistToggling={toggling.wishlist[product._id] || false}
+              isCartToggling={toggling.cart[product._id] || false}
+              toggleWishlist={toggleWishlist}
+              toggleCart={toggleCart}
+            />
           </SwiperSlide>
         ))}
       </Swiper>
