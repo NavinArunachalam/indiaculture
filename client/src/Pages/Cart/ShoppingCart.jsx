@@ -13,6 +13,7 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [removingItemId, setRemovingItemId] = useState(null);
+  const [updatingQty, setUpdatingQty] = useState({}); // Per-item loading state
   const [user, setUser] = useState(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const navigate = useNavigate();
@@ -83,6 +84,15 @@ const Cart = () => {
       return;
     }
 
+    // Optimistic update
+    const prevCartItems = [...cartItems]; // Store previous state for rollback
+    setCartItems((prev) =>
+      prev.map((i) =>
+        i.product._id === productId ? { ...i, quantity: newQty } : i
+      )
+    );
+    setUpdatingQty((prev) => ({ ...prev, [productId]: true }));
+
     try {
       const res = await axios.put(
         `${API_URL}/api/cart/${productId}`,
@@ -90,8 +100,16 @@ const Cart = () => {
         { withCredentials: true }
       );
       setCartItems(res.data.items || []);
+      Toastify({
+        text: "Quantity updated",
+        duration: 2000,
+        gravity: "bottom",
+        position: "center",
+        backgroundColor: "#16a34a",
+      }).showToast();
     } catch (err) {
       console.error("Failed to update quantity:", err);
+      setCartItems(prevCartItems); // Revert on failure
       Toastify({
         text: "Failed to update quantity",
         duration: 2000,
@@ -99,6 +117,8 @@ const Cart = () => {
         position: "center",
         backgroundColor: "#dc2626",
       }).showToast();
+    } finally {
+      setUpdatingQty((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
@@ -173,7 +193,7 @@ const Cart = () => {
         user.city?.trim() &&
         user.state?.trim() &&
         user.pincode?.trim() &&
-        user.mobile?.trim(); // Include phone in address check
+        user.mobile?.trim();
 
       if (!hasAddress) {
         navigate("/address", {
@@ -187,7 +207,7 @@ const Cart = () => {
             total: subtotal,
             address: {
               name: user.name || "",
-              phone: user.mobile || "", // Include phone
+              phone: user.mobile || "",
               address: user.address || "",
               city: user.city || "",
               state: user.state || "",
@@ -260,18 +280,18 @@ const Cart = () => {
 
             <div className="qty-controls">
               <div
-                className={`qty-control ${item.product.stock === 0 ? "disabled" : ""}`}
+                className={`qty-control ${item.product.stock === 0 || updatingQty[item.product._id] ? "disabled" : ""}`}
               >
                 <button
                   onClick={() => updateQty(item.product._id, -1)}
-                  disabled={item.product.stock === 0 || item.quantity <= 1}
+                  disabled={item.product.stock === 0 || item.quantity <= 1 || updatingQty[item.product._id]}
                 >
                   -
                 </button>
                 <span className="qty-value">{item.quantity}</span>
                 <button
                   onClick={() => updateQty(item.product._id, 1)}
-                  disabled={item.product.stock === 0 || item.quantity >= item.product.stock}
+                  disabled={item.product.stock === 0 || item.quantity >= item.product.stock || updatingQty[item.product._id]}
                 >
                   +
                 </button>
@@ -279,6 +299,7 @@ const Cart = () => {
               <button
                 className="delete-button"
                 onClick={() => handleDelete(item.product._id)}
+                disabled={removingItemId === item.product._id}
               >
                 <MdDelete size={28} />
               </button>

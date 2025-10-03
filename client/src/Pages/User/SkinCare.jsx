@@ -318,7 +318,7 @@ const SkinCare = () => {
           }}
           className="swiper-container"
         >
-          {[...Array(5)].map((_, index) => (
+          {[...Array(2)].map((_, index) => (
             <SwiperSlide key={index} className="flex items-center justify-center">
               <ProductCardSkeleton />
             </SwiperSlide>

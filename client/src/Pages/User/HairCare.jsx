@@ -317,7 +317,7 @@ const HairCare = () => {
           }}
           className="swiper-container"
         >
-          {[...Array(5)].map((_, index) => (
+          {[...Array(2)].map((_, index) => (
             <SwiperSlide key={index} className="">
               <ProductCardSkeleton />
             </SwiperSlide>

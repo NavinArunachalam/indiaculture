@@ -76,9 +76,9 @@ function App() {
           <Route path="/reviews" element={<ReviewSection />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/offerspage" element={<OfferPage />} />
         </Route>
+        <Route path="/login" element={<Login />} />
 
         {/* --------- ADMIN LAYOUT ROUTES --------- */}
         <Route path="/admin">
@@ -108,7 +108,7 @@ function App() {
               <Route path="customers/:id" element={<UserDetails />} />
               <Route path="reviews" element={<Reviews />} />
               <Route path="wishlistadmin" element={<AdminWishlist />} />
-              <Route path="offers" element={<Offer/>} />
+              <Route path="offers" element={<Offer />} />
             </Route>
           </Route>
         </Route>
