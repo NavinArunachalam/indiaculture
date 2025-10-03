@@ -21,17 +21,58 @@ const debounce = (func, wait) => {
 
 // Skeleton loader component
 const ProductCardSkeleton = () => (
-  <div className="w-[150px] h-[320px] bg-white rounded-lg shadow flex flex-col animate-pulse">
-    <div className="w-full h-[150px] bg-gray-200 rounded-t-lg"></div>
-    <div className="p-3 flex flex-col flex-grow">
-      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-      <div className="h-3 bg-gray-200 rounded mb-1"></div>
-      <div className="h-3 bg-gray-200 rounded mb-2"></div>
-      <div className="h-4 bg-gray-200 rounded"></div>
+  <div
+    className="
+      w-[calc(50%-4px)]
+      sm:w-[calc(24%-1px)]
+      px-1 
+      bg-white rounded-lg shadow-md overflow-hidden relative
+      h-[320px] sm:h-[360px] flex flex-col animate-pulse
+    "
+  >
+    {/* Placeholder for badge */}
+    <div className="absolute top-2 left-0 bg-gray-200 h-6 w-16 rounded-r"></div>
+
+    {/* Placeholder for image */}
+    <div className="flex items-center justify-center h-28 sm:h-44 bg-gray-200"></div>
+
+    {/* Content area */}
+    <div className="p-2 sm:p-3 flex flex-col flex-1 overflow-hidden min-h-0">
+      {/* Category name placeholder */}
+      <div className="h-3 sm:h-4 bg-gray-200 rounded mb-1 sm:mb-2 w-3/4"></div>
+
+      {/* Product name placeholder */}
+      <div className="h-3 sm:h-4 bg-gray-200 rounded mb-1 sm:mb-2 w-4/5"></div>
+
+      {/* Offer line placeholder */}
+      <div className="h-3 sm:h-4 bg-gray-200 rounded mb-1 sm:mb-2 w-2/3"></div>
+
+      {/* Description placeholder */}
+      <div
+        className="h-8 sm:h-11 bg-gray-200 rounded mb-1 sm:mb-2"
+        style={{ maxHeight: "44px" }}
+      ></div>
+
+      {/* Stock status placeholder */}
+      <div className="h-3 bg-gray-200 rounded mb-1 sm:mb-2 w-1/2"></div>
+
+      {/* Price and buttons placeholder */}
+      <div className="flex justify-between items-center mb-1 sm:mb-2">
+        <div className="flex items-center gap-1">
+          <div className="h-3 sm:h-4 bg-gray-200 rounded w-12"></div>
+          <div className="h-4 sm:h-5 bg-gray-200 rounded w-16"></div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-5 bg-gray-200 rounded-full"></div>
+          <div className="h-5 w-5 bg-gray-200 rounded-full"></div>
+        </div>
+      </div>
+
+      {/* Buy Now button placeholder */}
+      <div className="h-8 sm:h-10 bg-gray-200 rounded-md mt-auto"></div>
     </div>
   </div>
 );
-
 const HairCare = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -277,7 +318,7 @@ const HairCare = () => {
           className="swiper-container"
         >
           {[...Array(5)].map((_, index) => (
-            <SwiperSlide key={index} className="flex items-center justify-center">
+            <SwiperSlide key={index} className="">
               <ProductCardSkeleton />
             </SwiperSlide>
           ))}

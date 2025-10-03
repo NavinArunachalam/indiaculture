@@ -83,9 +83,8 @@ const ProductCard = React.memo(
             <div className="flex items-center gap-2 sm:gap-2">
               <button
                 onClick={() => toggleWishlist(product._id)}
-                className={`bg-transparent border-none cursor-pointer relative transition-opacity duration-200 ${
-                  isWishlistToggling ? "opacity-70" : "opacity-100"
-                }`}
+                className={`bg-transparent border-none cursor-pointer relative transition-opacity duration-200 ${isWishlistToggling ? "opacity-70" : "opacity-100"
+                  }`}
                 disabled={isWishlistToggling}
               >
                 {isWished ? (
@@ -96,19 +95,17 @@ const ProductCard = React.memo(
               </button>
               <button
                 onClick={() => toggleCart(product._id)}
-                className={`bg-transparent border-none cursor-pointer relative transition-opacity duration-200 ${
-                  isCartToggling || product.stock === 0 ? "opacity-70" : "opacity-100"
-                }`}
+                className={`bg-transparent border-none cursor-pointer relative transition-opacity duration-200 ${isCartToggling || product.stock === 0 ? "opacity-70" : "opacity-100"
+                  }`}
                 disabled={isCartToggling || product.stock === 0}
               >
                 <FaShoppingCart
-                  className={`text-xl sm:lg ${
-                    inCart
+                  className={`text-xl sm:lg ${inCart
                       ? "text-green-800"
                       : product.stock === 0
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "text-gray-400 hover:text-green-600 transition-colors"
-                  }`}
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-gray-400 hover:text-green-600 transition-colors"
+                    }`}
                 />
               </button>
             </div>
