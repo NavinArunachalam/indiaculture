@@ -194,8 +194,8 @@ const HairCare = () => {
         }).showToast();
         setToggling((prev) => ({
           ...prev,
-          cart: { ...prev.cart, [productId]: false },
-        });
+          cart: { ...prev.cart, [productId]: false }
+        }));
         return;
       }
 
