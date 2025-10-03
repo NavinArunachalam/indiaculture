@@ -45,28 +45,18 @@ const HairCare = () => {
 
     // Check localStorage for cached data
     const cachedProducts = localStorage.getItem("hairCareProducts");
-    const cacheTime = localStorage.getItem("hairCareProductsTime");
-    if (cachedProducts && cacheTime && Date.now() - parseInt(cacheTime) < 3600000) {
-      try {
-        const parsedProducts = JSON.parse(cachedProducts);
-        if (Array.isArray(parsedProducts)) {
-          setProducts(parsedProducts);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("Invalid cached products:", err);
-        localStorage.removeItem("hairCareProducts");
-        localStorage.removeItem("hairCareProductsTime");
-      }
+    if (cachedProducts) {
+      setProducts(JSON.parse(cachedProducts));
+      setLoading(false);
     }
 
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [productsRes, wishlistRes, cartRes] = await Promise.allSettled([
           axios.get(`${API_URL}/api/products`, {
             signal: controller.signal,
             params: { category: "Hair Care" }, // Filter on backend if possible
-            headers: { "If-Modified-Since": cacheTime || "" }, // Conditional fetch
           }),
           axios.get(`${API_URL}/api/wishlist`, {
             withCredentials: true,
@@ -82,17 +72,8 @@ const HairCare = () => {
           const hairCareProducts = productsRes.value.data.filter(
             (p) => p.category?.name === "Hair Care"
           );
-          // Only update if data has changed
-          if (
-            JSON.stringify(hairCareProducts) !==
-            JSON.stringify(JSON.parse(cachedProducts || "[]"))
-          ) {
-            setProducts(hairCareProducts);
-            localStorage.setItem("hairCareProducts", JSON.stringify(hairCareProducts));
-            localStorage.setItem("hairCareProductsTime", Date.now());
-          }
-        } else if (productsRes.status === "rejected" && productsRes.reason.response?.status === 304) {
-          console.log("Products not modified, using cache");
+          setProducts(hairCareProducts);
+          localStorage.setItem("hairCareProducts", JSON.stringify(hairCareProducts));
         }
 
         if (wishlistRes.status === "fulfilled") {
@@ -257,7 +238,7 @@ const HairCare = () => {
     [cart, products]
   );
 
-  // Memoize products
+  // Memoize products to prevent unnecessary re-renders
   const memoizedProducts = useMemo(() => products, [products]);
 
   if (loading) {
