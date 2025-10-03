@@ -45,12 +45,18 @@ const HairCare = () => {
     // Check localStorage for cached data
     const cachedProducts = localStorage.getItem("hairCareProducts");
     const cacheTime = localStorage.getItem("hairCareProductsTime");
+    console.log("Cached Products:", cachedProducts);
+    console.log("Cache Time:", cacheTime);
     if (cachedProducts && cacheTime && Date.now() - parseInt(cacheTime) < 3600000) {
       try {
         const parsedProducts = JSON.parse(cachedProducts);
-        if (Array.isArray(parsedProducts)) {
+        if (Array.isArray(parsedProducts) && parsedProducts.length > 0) {
           setProducts(parsedProducts);
           setLoading(false);
+        } else {
+          console.warn("Cached products empty or invalid, fetching fresh data");
+          localStorage.removeItem("hairCareProducts");
+          localStorage.removeItem("hairCareProductsTime");
         }
       } catch (err) {
         console.error("Invalid cached products:", err);
@@ -81,6 +87,8 @@ const HairCare = () => {
           const hairCareProducts = productsRes.value.data.filter(
             (p) => p.category?.name === "Hair Care"
           );
+          console.log("API Response:", productsRes.value.data);
+          console.log("Filtered Hair Care Products:", hairCareProducts);
           if (
             JSON.stringify(hairCareProducts) !==
             JSON.stringify(JSON.parse(cachedProducts || "[]"))
@@ -94,19 +102,21 @@ const HairCare = () => {
         }
 
         if (wishlistRes.status === "fulfilled") {
+          console.log("Wishlist Response:", wishlistRes.value.data);
           setWishlist(wishlistRes.value.data.map((item) => item.product._id));
         } else {
-          console.log("Wishlist fetch skipped");
+          console.error("Wishlist fetch failed:", wishlistRes.reason);
         }
 
         if (cartRes.status === "fulfilled") {
+          console.log("Cart Response:", cartRes.value.data);
           setCart(cartRes.value.data.items.map((item) => item.product._id));
         } else {
-          console.log("Cart fetch skipped");
+          console.error("Cart fetch failed:", cartRes.reason);
         }
       } catch (err) {
         if (err.name === "AbortError") return;
-        console.error("Failed to fetch data:", err);
+        console.error("Error details:", err.response?.data, err.message);
       } finally {
         setLoading(false);
       }
@@ -268,10 +278,13 @@ const HairCare = () => {
           loop={true}
           grabCursor={true}
           breakpoints={{
+            1280: { slidesPerView: 5, spaceBetween: 20 },
+            1024: { slidesPerView: 5, spaceBetween: 20 },
             640: { slidesPerView: 5, spaceBetween: 20 },
             320: { slidesPerView: 2, spaceBetween: 10 },
           }}
           className="swiper-container"
+          onSwiper={(swiper) => console.log("Swiper initialized:", swiper)}
         >
           {[...Array(5)].map((_, index) => (
             <SwiperSlide key={index} className="flex items-center justify-center">
@@ -284,6 +297,7 @@ const HairCare = () => {
   }
 
   if (!memoizedProducts.length) {
+    console.log("No products to display, products array:", memoizedProducts);
     return (
       <div className="text-center py-10 text-gray-500 text-lg">
         No Hair Care Products Available
@@ -303,10 +317,13 @@ const HairCare = () => {
         loop={true}
         grabCursor={true}
         breakpoints={{
+          1280: { slidesPerView: 5, spaceBetween: 20 },
+          1024: { slidesPerView: 5, spaceBetween: 20 },
           640: { slidesPerView: 5, spaceBetween: 20 },
           320: { slidesPerView: 2, spaceBetween: 10 },
         }}
         className="swiper-container"
+        onSwiper={(swiper) => console.log("Swiper initialized:", swiper)}
       >
         {memoizedProducts.map((product) => (
           <SwiperSlide key={product._id} className="flex items-center justify-center">
@@ -318,6 +335,7 @@ const HairCare = () => {
               isCartToggling={toggling.cart[product._id] || false}
               toggleWishlist={toggleWishlist}
               toggleCart={toggleCart}
+              className="min-w-[150px]"
             />
           </SwiperSlide>
         ))}
