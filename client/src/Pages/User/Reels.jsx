@@ -1,87 +1,116 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 import "./Reels.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+// Simple debounce utility
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), wait);
+  };
+};
 
 const Reels = () => {
   const videoRowRef = useRef(null);
   const videoRefs = useRef([]);
   const [playingIndex, setPlayingIndex] = useState(null);
   const [videos, setVideos] = useState([]);
+  const [isToggling, setIsToggling] = useState({});
 
-  // Fetch reels from API
   useEffect(() => {
+    const controller = new AbortController();
     const fetchVideos = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/api/reels`);
-        // Map data to only video URLs
+        const { data } = await axios.get(`${API_URL}/api/reels`, {
+          signal: controller.signal,
+        });
         const videoUrls = data
           .map((reel) => reel.media[0]?.url)
-          .filter((url) => url); // remove nulls
-        // Optional: duplicate for scrolling effect
-        const duplicated = [...videoUrls, ...videoUrls, ...videoUrls,...videoUrls,...videoUrls];
+          .filter((url) => url);
+        const duplicated = [...videoUrls, ...videoUrls, ...videoUrls, ...videoUrls, ...videoUrls];
         setVideos(duplicated);
       } catch (err) {
-        console.error("Failed to fetch reels:", err);
+        if (err.name !== "AbortError") {
+          console.error("Failed to fetch reels:", err);
+        }
       }
     };
 
     fetchVideos();
+
+    return () => controller.abort();
   }, []);
 
-  const handleMouseEnter = () => {
-    videoRowRef.current?.classList.add("paused");
-  };
+  const memoizedVideos = useMemo(() => videos, [videos]);
 
-  const handleMouseLeave = () => {
-    if (playingIndex === null) videoRowRef.current?.classList.remove("paused");
-  };
+  const handleMouseEnter = useCallback(() => {
+    videoRowRef.current?.classList.add("reels-paused");
+  }, []);
 
-  const togglePlay = async (index) => {
-    const clickedVideo = videoRefs.current[index];
-    if (!clickedVideo) return;
+  const handleMouseLeave = useCallback(() => {
+    if (playingIndex === null) videoRowRef.current?.classList.remove("reels-paused");
+  }, [playingIndex]);
 
-    try {
-      // Pause all other videos
-      for (let i = 0; i < videoRefs.current.length; i++) {
-        if (i !== index && videoRefs.current[i] && !videoRefs.current[i].paused) {
-          await videoRefs.current[i].pause();
+  const togglePlay = useCallback(
+    debounce(async (index) => {
+      setIsToggling((prev) => ({ ...prev, [index]: true }));
+      const clickedVideo = videoRefs.current[index];
+      if (!clickedVideo) {
+        setIsToggling((prev) => ({ ...prev, [index]: false }));
+        return;
+      }
+
+      const isPaused = clickedVideo.paused || clickedVideo.ended;
+      setPlayingIndex(isPaused ? index : null);
+      videoRowRef.current?.classList.toggle("reels-paused", isPaused);
+
+      try {
+        for (let i = 0; i < videoRefs.current.length; i++) {
+          if (i !== index && videoRefs.current[i] && !videoRefs.current[i].paused) {
+            await videoRefs.current[i].pause();
+          }
         }
-      }
 
-      if (clickedVideo.paused || clickedVideo.ended) {
-        await clickedVideo.play();
-        setPlayingIndex(index);
-        videoRowRef.current?.classList.add("paused");
-      } else {
-        clickedVideo.pause();
-        setPlayingIndex(null);
-        videoRowRef.current?.classList.remove("paused");
+        if (isPaused) {
+          await clickedVideo.play();
+        } else {
+          await clickedVideo.pause();
+        }
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Video playback error:", err);
+          setPlayingIndex(playingIndex);
+          videoRowRef.current?.classList.toggle("reels-paused", playingIndex !== null);
+        }
+      } finally {
+        setIsToggling((prev) => ({ ...prev, [index]: false }));
       }
-    } catch (err) {
-      if (err.name !== "AbortError") console.error(err);
-    }
-  };
+    }, 200),
+    [playingIndex]
+  );
 
-  const handleEnded = () => {
+  const handleEnded = useCallback(() => {
     setPlayingIndex(null);
-    videoRowRef.current?.classList.remove("paused");
-  };
+    setIsToggling((prev) => ({ ...prev, [playingIndex]: false }));
+    videoRowRef.current?.classList.remove("reels-paused");
+  }, [playingIndex]);
 
   return (
-    <div className="social-video-sec">
-      <h1 className="text-3xl sm:text-4xl text-green-900 font-bold font-[times] text-center mt-10 mb-10">
+    <div className="reels-social-video-sec">
+      <h1 className="reels-title text-3xl sm:text-4xl text-green-900 font-bold font-[times] text-center mt-10 mb-10">
         Popular Instagram Videos
       </h1>
       <div
-        className="video-section"
+        className="reels-video-section"
         ref={videoRowRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {videos.map((video, index) => (
-          <div className="video-card" key={`${video}-${index}`}>
+        {memoizedVideos.map((video, index) => (
+          <div className="reels-video-card" key={`${video}-${index}`}>
             <video
               src={video}
               ref={(el) => (videoRefs.current[index] = el)}
@@ -89,10 +118,13 @@ const Reels = () => {
               preload="metadata"
               onClick={() => togglePlay(index)}
               onEnded={handleEnded}
-              className="video-element"
+              className="reels-video-element"
             />
             {playingIndex !== index && (
-              <div className="play-icon" onClick={() => togglePlay(index)}>
+              <div
+                className={`reels-play-icon ${isToggling[index] ? "reels-toggling" : ""}`}
+                onClick={() => togglePlay(index)}
+              >
                 &#9658;
               </div>
             )}

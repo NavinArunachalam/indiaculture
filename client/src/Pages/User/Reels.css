@@ -1,35 +1,44 @@
-body {
-  font-family: Arial, sans-serif;
-  background: #fff;
+/* Reels.css */
+.reels-social-video-sec,
+.reels-social-video-sec * {
+  box-sizing: border-box;
   margin: 0;
-  padding: 20px;
-  overflow-x: hidden;
+  padding: 0;
 }
 
-.social-video-sec {
-  margin-bottom: 50px;
+.reels-social-video-sec {
+  max-width: 100%;
+  padding: 0 1rem;
   overflow: hidden;
-  width: 100%;
+  background: #fff;
 }
 
-.video-section {
+.reels-social-video-sec .reels-title {
+  margin: 0;
+}
+
+.reels-video-section {
   display: flex;
   gap: 20px;
   width: max-content;
-  animation: scroll-left 25s linear infinite;
+  animation: reels-scroll-left 25s linear infinite;
   will-change: transform;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
-@keyframes scroll-left {
+@keyframes reels-scroll-left {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
-.paused {
+.reels-video-section.reels-paused {
   animation-play-state: paused !important;
 }
 
-.video-card {
+.reels-video-card {
   position: relative;
   flex: 0 0 auto;
   width: 200px;
@@ -39,40 +48,60 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.video-element {
+.reels-video-card .reels-video-element {
   width: 100%;
   height: 100%;
   object-fit: cover;
   cursor: pointer;
   z-index: 1;
+  background: #000;
 }
 
-.play-icon {
+.reels-video-card .reels-play-icon {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 22px;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.6);
+  font-size: 22px !important;
+  color: #fff !important;
+  background-color: rgba(0, 0, 0, 0.6) !important;
   border-radius: 50%;
   cursor: pointer;
   width: 50px;
   height: 50px;
-  display: flex;
+  display: flex !important;
   justify-content: center;
   align-items: center;
   z-index: 2;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
+  pointer-events: auto;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
 }
 
-.play-icon:hover,
-.play-icon:focus {
-  background-color: rgba(0, 0, 0, 0.8);
+.reels-video-card .reels-play-icon.reels-toggling {
+  opacity: 0.7;
+}
+
+.reels-video-card .reels-play-icon:hover,
+.reels-video-card .reels-play-icon:focus {
+  background-color: rgba(0, 0, 0, 0.8) !important;
   transform: translate(-50%, -50%) scale(1.1);
   outline: none;
 }
 
-.play-icon:focus {
+.reels-video-card .reels-play-icon:focus {
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 640px) {
+  .reels-video-card {
+    width: 180px;
+    height: 320px;
+  }
+
+  .reels-video-card .reels-play-icon {
+    font-size: 18px !important;
+    width: 40px;
+    height: 40px;
+  }
 }
