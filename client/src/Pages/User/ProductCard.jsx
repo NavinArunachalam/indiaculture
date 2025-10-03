@@ -48,7 +48,7 @@ const ProductCard = React.memo(
           )}
 
           {/* Description */}
-          <p className="text-xs text-gray-700 mb-2 truncate">
+          <p className="text-xs text-gray-700  truncate">
             {product.description || "No description available"}
           </p>
 
