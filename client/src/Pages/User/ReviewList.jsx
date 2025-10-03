@@ -65,7 +65,7 @@ const Reviews = () => {
       >
         {groupedReviews.map((pair, index) => (
           <SwiperSlide key={index} className="pb-8">
-            <div className="flex flex-col space-y-3 w-full">
+            <div className="flex flex-col space-y-2 w-full">
               {pair.map((item, idx) => (
                 <div
                   key={idx}
@@ -76,21 +76,21 @@ const Reviews = () => {
                     <div className="text-left relative flex">
                       <span className="text-green-700 mr-1">
                         <FaQuoteLeft className="size-4 sm:size-4 md:size-5" />
-                    <p className="text-sm sm:text-sm md:text-base pl-5">{item.comment}</p>
+                    <p className="text-lg sm:text-lg md:text-base pl-5">{item.comment}</p>
                       </span> 
                     </div>
                   </div>
 
                   {/* Stacked Name, Product, and Stars */}
                   <div className="text-center mt-3 space-y-1">
-                    <h3 className="text-sm sm:text-sm md:text-base font-semibold text-green-800 truncate">
+                    <h3 className="text-lg sm:text-lg md:text-base font-semibold text-green-800 truncate">
                       {item.user?.name || "Anonymous"}
                     </h3>
 
                     <div className="flex justify-center space-x-1 text-yellow-400">
                       {item.stars.map((s, i) =>
                         s === 1 ? (
-                          <FaStar key={i} className="size-3 sm:size-4 md:size-5" aria-label="Full star" />
+                          <FaStar key={i} className="size-4 sm:size-4 md:size-5" aria-label="Full star" />
                         ) : s === 0.5 ? (
                           <FaStarHalfAlt key={i} className="size-4 sm:size-4 md:size-5" aria-label="Half star" />
                         ) : (
