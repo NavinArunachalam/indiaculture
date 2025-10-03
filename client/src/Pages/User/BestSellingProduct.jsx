@@ -42,30 +42,35 @@ const ProductCard = React.memo(({ product, inCart, isCartToggling, handleAddToCa
   >
     <Link to={`/productdetails/${product._id}`}>
       <div
-        className="product-image h-[200px] sm:h-[140px] max-sm:h-[100px] sm:aspect-square max-sm:aspect-square bg-gradient-to-b from-[#9fd483] to-[#8dc26f] sm:bg-none max-sm:bg-gray-100 flex items-center justify-center overflow-hidden"
+        className="product-image  sm:h-[140px] max-sm:h-[100px]  sm:bg-none max-sm:bg-gray-100 flex items-center justify-center overflow-hidden"
       >
         <img
           src={`${product.images?.[0]?.url || "/placeholder.png"}?w=260&format=webp`}
           alt={product.name}
-          className="w-full h-full object-contain mx-auto"
+          className="w-full h-full object-contain sm:object-cover "
           loading="lazy"
           onError={(e) => (e.target.src = "/placeholder.png")}
         />
       </div>
     </Link>
+    
     <div className="product-details p-[15px_18px] sm:p-3 max-sm:p-[10px_12px] flex flex-col flex-grow h-[220px] sm:h-[220px] max-sm:h-[180px]">
-      <h2 className="product-name font-serif text-lg sm:text-base max-sm:text-sm mb-2 whitespace-nowrap overflow-hidden text-ellipsis">
+              <span className="text-xs sm:text-sm text-gray-500 uppercase font-bold">
+        {product.category?.name || "Uncategorized"}
+      </span>
+      <h2 className="product-name font-serif text-lg sm:text-base max-sm:text-sm mb-2 whitespace-nowrap overflow-hidden text-ellipsis ">
         {product.name}
       </h2>
+
       {product.offer_line && (
         <span className="offer-badge text-green-600 font-semibold text-sm sm:text-[0.9rem] max-sm:text-[0.85rem] mb-2 block">
           {product.offer_line} Launch Offer
         </span>
       )}
-      <p className="product-description text-gray-600 leading-tight text-sm sm:text-[0.9rem] max-sm:text-[0.85rem] mb-4 overflow-hidden text-ellipsis line-clamp-3 sm:line-clamp-2 max-sm:line-clamp-1 max-sm:leading-tight flex-grow">
-        {product.description}
-      </p>
-      <div className="product-footer flex justify-between items-center sm:flex-col sm:items-start max-sm:flex-col max-sm:items-start sm:gap-2 max-sm:gap-1.5 mt-auto">
+           <p className="text-xs sm:text-sm text-gray-700 mb-1 sm:mb-2 overflow-hidden line-clamp-1">
+            {product.description}
+          </p>
+      <div className="product-footer flex justify-between items-center sm:flex-col sm:items-start max-sm:flex-col max-sm:items-start sm:gap-2 max-sm:gap-1.5 ">
         <div className="price-box flex items-center gap-1.5">
           <span className="old-price text-base sm:text-[0.9rem] max-sm:text-[0.85rem] text-gray-500 line-through">
             ₹{product.old_price}
@@ -268,7 +273,7 @@ const BestSellingProduct = () => {
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-5 px-3 sm:px-0 mb-10">
         {loading ? (
-          [...Array(8)].map((_, index) => (
+          [...Array(2)].map((_, index) => (
             <div key={index} className="w-full max-w-[260px] mx-auto">
               <ProductCardSkeleton />
             </div>
