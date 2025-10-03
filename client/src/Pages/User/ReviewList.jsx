@@ -69,21 +69,21 @@ const Reviews = () => {
               {pair.map((item, idx) => (
                 <div
                   key={idx}
-                  className="bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm flex flex-col p-4 w-full min-h-[120px] sm:min-h-[140px]"
+                  className="bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm flex flex-col p-4 w-full min-h-[100px] sm:min-h-[140px]"
                 >
                   {/* Comment Section */}
                   <div className="flex-grow">
                     <div className="text-left relative flex">
                       <span className="text-green-700 mr-1">
-                        <FaQuoteLeft className="size-3 sm:size-4 md:size-5" />
-                    <p className="text-xs sm:text-sm md:text-base pl-5">{item.comment}</p>
+                        <FaQuoteLeft className="size-4 sm:size-4 md:size-5" />
+                    <p className="text-sm sm:text-sm md:text-base pl-5">{item.comment}</p>
                       </span> 
                     </div>
                   </div>
 
                   {/* Stacked Name, Product, and Stars */}
                   <div className="text-center mt-3 space-y-1">
-                    <h3 className="text-xs sm:text-sm md:text-base font-semibold text-green-800 truncate">
+                    <h3 className="text-sm sm:text-sm md:text-base font-semibold text-green-800 truncate">
                       {item.user?.name || "Anonymous"}
                     </h3>
 
@@ -92,9 +92,9 @@ const Reviews = () => {
                         s === 1 ? (
                           <FaStar key={i} className="size-3 sm:size-4 md:size-5" aria-label="Full star" />
                         ) : s === 0.5 ? (
-                          <FaStarHalfAlt key={i} className="size-3 sm:size-4 md:size-5" aria-label="Half star" />
+                          <FaStarHalfAlt key={i} className="size-4 sm:size-4 md:size-5" aria-label="Half star" />
                         ) : (
-                          <FaRegStar key={i} className="size-3 sm:size-4 md:size-5" aria-label="Empty star" />
+                          <FaRegStar key={i} className="size-4 sm:size-4 md:size-5" aria-label="Empty star" />
                         )
                       )}
                     </div>
