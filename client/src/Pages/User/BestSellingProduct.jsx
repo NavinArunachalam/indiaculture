@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import Toastify from "toastify-js";
@@ -17,17 +17,17 @@ const BestSellingProduct = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // ✅ Fetch categories
+        // Fetch categories
         const catRes = await axios.get(`${API_URL}/api/categories`);
         const allCategories = catRes.data.map((c) => ({ _id: c._id, name: c.name }));
         setCategories([{ _id: "all", name: "All Products" }, ...allCategories]);
 
-        // ✅ Fetch products
+        // Fetch products
         const prodRes = await axios.get(`${API_URL}/api/products`);
         const bestSellingProducts = prodRes.data.filter((p) => p.is_bestsell);
         setProducts(bestSellingProducts);
 
-        // ✅ Fetch cart (optional: to highlight products already in cart)
+        // Fetch cart
         try {
           const cartRes = await axios.get(`${API_URL}/api/cart`, { withCredentials: true });
           setCart(cartRes.data.items.map((item) => item.product._id));
@@ -44,13 +44,14 @@ const BestSellingProduct = () => {
     fetchData();
   }, []);
 
-  // ✅ Filter products by category
-  const filteredProducts =
-    selectedCategory === "all"
+  // Memoize filtered products to optimize performance
+  const filteredProducts = useMemo(() => {
+    return selectedCategory === "all"
       ? products
       : products.filter((p) => p.category && p.category._id === selectedCategory && p.is_bestsell);
+  }, [products, selectedCategory]);
 
-  // ✅ Add to Cart
+  // Add to Cart
   const handleAddToCart = async (productId) => {
     try {
       if (cart.includes(productId)) {
@@ -90,7 +91,45 @@ const BestSellingProduct = () => {
     }
   };
 
-  if (loading) return <p>Loading products...</p>;
+  // Skeleton component for loading state
+  const SkeletonCard = () => (
+    <div className="product-card skeleton">
+      <div className="product-image skeleton-image"></div>
+      <div className="product-details">
+        <div className="skeleton-text skeleton-name"></div>
+        <div className="skeleton-text skeleton-description"></div>
+        <div className="product-footer">
+          <div className="price-box">
+            <div className="skeleton-text skeleton-price"></div>
+          </div>
+          <div className="skeleton-text skeleton-button"></div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <main className="shop-container">
+        <div className="shop-header">
+          <h1 className="col-span-2 text-center mb-3 font-[times] text-[#2e5939] leading-[1.08] font-bold capitalize">
+            Best Selling Products
+          </h1>
+          <p>
+            Transform your self-care routine with our carefully curated selection
+            of skin, hair, and wellness products.
+          </p>
+        </div>
+        <div className="products-grid">
+          {Array(6)
+            .fill()
+            .map((_, index) => (
+              <SkeletonCard key={index} />
+            ))}
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="shop-container">

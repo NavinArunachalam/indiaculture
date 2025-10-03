@@ -67,7 +67,7 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 420px; /* Fixed height for consistency */
 }
 
 /* Product Image */
@@ -92,27 +92,40 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  height: 220px; /* Fixed height for details section */
 }
 
+/* Product Name */
 .shop-container .product-name {
   font-family: "PT Serif", serif;
   font-size: 1.2rem;
   margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Offer Badge */
+.shop-container .offer-badge {
+  color: #1da334;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* Product Description */
 .shop-container .product-description {
   color: #666;
   line-height: 1.4;
   font-size: 0.9rem;
   margin-bottom: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* Limit to 3 lines */
+  -webkit-box-orient: vertical;
   flex-grow: 1;
-}
-
-/* Offer Badge */
-.offer-badge {
-  color: #1da334;
-  font-weight: 600;
-  font-size: 14px;
 }
 
 /* Footer */
@@ -157,6 +170,54 @@
   background: #70a751;
 }
 
+/* Skeleton Loading */
+.skeleton {
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton-image {
+  background: #e0e0e0;
+  height: 200px;
+  width: 100%;
+}
+
+.skeleton-text {
+  background: #e0e0e0;
+  border-radius: 4px;
+  height: 16px;
+  margin-bottom: 8px;
+}
+
+.skeleton-name {
+  width: 60%;
+}
+
+.skeleton-description {
+  height: 48px; /* Simulate 3-line description */
+}
+
+.skeleton-price {
+  width: 40%;
+}
+
+.skeleton-button {
+  width: 100px;
+  height: 34px;
+  border-radius: 20px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 /* ---------------- Responsive ---------------- */
 
 /* Tablet (<768px) */
@@ -169,14 +230,18 @@
   }
 
   .shop-container .products-grid {
-    grid-template-columns: repeat(2, 1fr); /* Exactly two columns */
-    gap: 12px; /* Tighter gap for mobile */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .shop-container .product-card {
+    height: 360px; /* Adjusted for tablet */
   }
 
   .shop-container .product-image {
-    height: 140px; /* Fixed height for consistency */
-    aspect-ratio: 1/1; /* Square for better image fit */
-    background: none; /* Remove gradient for clarity */
+    height: 140px;
+    aspect-ratio: 1/1;
+    background: none;
   }
 
   .shop-container .product-image img {
@@ -187,12 +252,18 @@
     margin: auto;
   }
 
+  .shop-container .product-details {
+    height: 220px; /* Consistent details height */
+    padding: 12px;
+  }
+
   .shop-container .product-name {
     font-size: 1.1rem;
   }
 
   .shop-container .product-description {
     font-size: 0.9rem;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
   }
 
   .shop-container .offer-badge {
@@ -208,15 +279,19 @@
   }
 
   .shop-container .product-footer {
-    flex-direction: column; /* Stack price and button */
-    align-items: flex-start; /* Align left for consistency */
-    gap: 8px; /* Space between price and button */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 
   .shop-container .add-to-cart {
-    width: 100%; /* Full-width for easier tapping */
-    padding: 8px; /* Slightly larger padding */
-    font-size: 0.9rem; /* Slightly larger for readability */
+    width: 100%;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+
+  .skeleton-description {
+    height: 32px; /* Simulate 2-line description */
   }
 }
 
@@ -240,14 +315,18 @@
   }
 
   .shop-container .products-grid {
-    grid-template-columns: repeat(2, 1fr); /* Exactly two columns */
-    gap: 8px; /* Tighter gap for smaller screens */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .shop-container .product-card {
+    height: 300px; /* Adjusted for mobile */
   }
 
   .shop-container .product-image {
-    height: 100px; /* Smaller height for mobile */
-    aspect-ratio: 1/1; /* Square for consistency */
-    background: none; /* Remove gradient for clarity */
+    height: 100px;
+    aspect-ratio: 1/1;
+    background: none;
   }
 
   .shop-container .product-image img {
@@ -259,15 +338,17 @@
   }
 
   .shop-container .product-details {
-    padding: 10px 12px; /* Reduced padding for compact layout */
+    height: 200px; /* Consistent details height */
+    padding: 10px 12px;
   }
 
   .shop-container .product-name {
-    font-size: 1rem; /* Slightly smaller for fit */
+    font-size: 1rem;
   }
 
   .shop-container .product-description {
-    font-size: 0.85rem; /* Slightly smaller for fit */
+    font-size: 0.85rem;
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
   }
 
   .shop-container .offer-badge {
@@ -283,14 +364,18 @@
   }
 
   .shop-container .product-footer {
-    flex-direction: column; /* Stack price and button */
-    align-items: flex-start; /* Align left */
-    gap: 6px; /* Tighter spacing */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 
   .shop-container .add-to-cart {
-    width: 100%; /* Full-width for easier tapping */
-    padding: 6px; /* Compact padding */
+    width: 100%;
+    padding: 6px;
     font-size: 0.85rem;
+  }
+
+  .skeleton-description {
+    height: 32px; /* Simulate 2-line description */
   }
 }
