@@ -68,11 +68,11 @@ const HairCare = () => {
             params: { category: "Hair Care" }, // Filter on backend if possible
             headers: { "If-Modified-Since": cacheTime || "" }, // Conditional fetch
           }),
-          axios.get(`${API_URL}/api/wishlist", {
+          axios.get(`${API_URL}/api/wishlist`, {
             withCredentials: true,
             signal: controller.signal,
           }),
-          axios.get(`${API_URL}/api/cart", {
+          axios.get(`${API_URL}/api/cart`, {
             withCredentials: true,
             signal: controller.signal,
           }),
