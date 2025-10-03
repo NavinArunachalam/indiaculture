@@ -21,58 +21,21 @@ const debounce = (func, wait) => {
 
 // Skeleton loader component
 const ProductCardSkeleton = () => (
-  <div
-    className="
-      w-[calc(50%-4px)]
-      sm:w-[calc(24%-1px)]
-      px-1 
-      bg-white rounded-lg shadow-md overflow-hidden relative
-      h-[320px] sm:h-[360px] flex flex-col animate-pulse
-    "
-  >
-    {/* Placeholder for badge */}
-    <div className="absolute top-2 left-0 bg-gray-200 h-6 w-16 rounded-r"></div>
-
-    {/* Placeholder for image */}
-    <div className="flex items-center justify-center h-28 sm:h-44 bg-gray-200"></div>
-
-    {/* Content area */}
-    <div className="p-2 sm:p-3 flex flex-col flex-1 overflow-hidden min-h-0">
-      {/* Category name placeholder */}
-      <div className="h-3 sm:h-4 bg-gray-200 rounded mb-1 sm:mb-2 w-3/4"></div>
-
-      {/* Product name placeholder */}
-      <div className="h-3 sm:h-4 bg-gray-200 rounded mb-1 sm:mb-2 w-4/5"></div>
-
-      {/* Offer line placeholder */}
-      <div className="h-3 sm:h-4 bg-gray-200 rounded mb-1 sm:mb-2 w-2/3"></div>
-
-      {/* Description placeholder */}
-      <div
-        className="h-8 sm:h-11 bg-gray-200 rounded mb-1 sm:mb-2"
-        style={{ maxHeight: "44px" }}
-      ></div>
-
-      {/* Stock status placeholder */}
-      <div className="h-3 bg-gray-200 rounded mb-1 sm:mb-2 w-1/2"></div>
-
-      {/* Price and buttons placeholder */}
-      <div className="flex justify-between items-center mb-1 sm:mb-2">
-        <div className="flex items-center gap-1">
-          <div className="h-3 sm:h-4 bg-gray-200 rounded w-12"></div>
-          <div className="h-4 sm:h-5 bg-gray-200 rounded w-16"></div>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="h-5 w-5 bg-gray-200 rounded-full"></div>
-          <div className="h-5 w-5 bg-gray-200 rounded-full"></div>
-        </div>
+  <div className="w-full bg-white rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex flex-col h-[420px] sm:h-[360px] max-sm:h-[280px] animate-pulse">
+    <div className="skeleton-image h-[200px] sm:h-[140px] max-sm:h-[100px] w-full bg-gray-200"></div>
+    <div className="p-[15px_18px] sm:p-3 max-sm:p-[10px_12px] flex flex-col flex-grow h-[220px] sm:h-[220px] max-sm:h-[180px]">
+      <div className="skeleton-text h-4 bg-gray-200 rounded mb-2 w-3/5"></div>
+      <div className="skeleton-text h-4 bg-gray-200 rounded mb-2"></div>
+      <div className="skeleton-description h-12 sm:h-8 max-sm:h-4 bg-gray-200 rounded mb-4"></div>
+      <div className="flex justify-between items-center sm:flex-col sm:items-start max-sm:flex-col max-sm:items-start sm:gap-2 max-sm:gap-1.5 mt-auto">
+        <div className="skeleton-price h-4 bg-gray-200 rounded w-2/5"></div>
+        <div className="skeleton-button h-[34px] sm:h-[34px] max-sm:h-[30px] w-[100px] sm:w-full max-sm:w-full bg-gray-200 rounded-full"></div>
       </div>
-
-      {/* Buy Now button placeholder */}
-      <div className="h-8 sm:h-10 bg-gray-200 rounded-md mt-auto"></div>
     </div>
   </div>
 );
+
+      
 const HairCare = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
