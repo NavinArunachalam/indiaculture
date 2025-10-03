@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Lazy } from "swiper/modules";
+import { Navigation } from "swiper/modules";
 import axios from "axios";
 import Toastify from "toastify-js";
 import "swiper/css";
 import "swiper/css/navigation";
-import "swiper/css/lazy";
 import "toastify-js/src/toastify.css";
 import ProductCard from "./ProductCard";
 
@@ -45,18 +44,28 @@ const HairCare = () => {
 
     // Check localStorage for cached data
     const cachedProducts = localStorage.getItem("hairCareProducts");
-    if (cachedProducts) {
-      setProducts(JSON.parse(cachedProducts));
-      setLoading(false);
+    const cacheTime = localStorage.getItem("hairCareProductsTime");
+    if (cachedProducts && cacheTime && Date.now() - parseInt(cacheTime) < 3600000) {
+      try {
+        const parsedProducts = JSON.parse(cachedProducts);
+        if (Array.isArray(parsedProducts)) {
+          setProducts(parsedProducts);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Invalid cached products:", err);
+        localStorage.removeItem("hairCareProducts");
+        localStorage.removeItem("hairCareProductsTime");
+      }
     }
 
     const fetchData = async () => {
       try {
-        setLoading(true);
         const [productsRes, wishlistRes, cartRes] = await Promise.allSettled([
           axios.get(`${API_URL}/api/products`, {
             signal: controller.signal,
-            params: { category: "Hair Care" }, // Filter on backend if possible
+            params: { category: "Hair Care" },
+            headers: { "If-Modified-Since": cacheTime || "" },
           }),
           axios.get(`${API_URL}/api/wishlist`, {
             withCredentials: true,
@@ -72,8 +81,16 @@ const HairCare = () => {
           const hairCareProducts = productsRes.value.data.filter(
             (p) => p.category?.name === "Hair Care"
           );
-          setProducts(hairCareProducts);
-          localStorage.setItem("hairCareProducts", JSON.stringify(hairCareProducts));
+          if (
+            JSON.stringify(hairCareProducts) !==
+            JSON.stringify(JSON.parse(cachedProducts || "[]"))
+          ) {
+            setProducts(hairCareProducts);
+            localStorage.setItem("hairCareProducts", JSON.stringify(hairCareProducts));
+            localStorage.setItem("hairCareProductsTime", Date.now());
+          }
+        } else if (productsRes.status === "rejected" && productsRes.reason.response?.status === 304) {
+          console.log("Products not modified, using cache");
         }
 
         if (wishlistRes.status === "fulfilled") {
@@ -238,7 +255,7 @@ const HairCare = () => {
     [cart, products]
   );
 
-  // Memoize products to prevent unnecessary re-renders
+  // Memoize products
   const memoizedProducts = useMemo(() => products, [products]);
 
   if (loading) {
@@ -248,7 +265,7 @@ const HairCare = () => {
           Recommended Hair Care Solution
         </h2>
         <Swiper
-          modules={[Navigation, Lazy]}
+          modules={[Navigation]}
           spaceBetween={10}
           slidesPerView={2}
           loop={false}
@@ -285,12 +302,11 @@ const HairCare = () => {
         Recommended Hair Care Solution
       </h2>
       <Swiper
-        modules={[Navigation, Lazy]}
+        modules={[Navigation]}
         spaceBetween={10}
         slidesPerView={2}
         loop={false}
         grabCursor={true}
-        lazy={{ loadPrevNext: true }}
         breakpoints={{
           640: { slidesPerView: 5, spaceBetween: 20 },
           320: { slidesPerView: 2, spaceBetween: 10 },
