@@ -1,8 +1,6 @@
 .reels-social-video-sec,
 .reels-social-video-sec * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 .reels-social-video-sec {
@@ -12,9 +10,7 @@
   background: #fff;
 }
 
-.reels-social-video-sec .reels-title {
-  margin: 0;
-}
+
 
 .reels-video-section {
   display: flex;

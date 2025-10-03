@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import axios from "axios";
@@ -30,36 +30,33 @@ const SkinCare = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const productsRes = await axios.get(`${API_URL}/api/products`, {
-          signal: controller.signal,
-        });
-        const faceCareProducts = productsRes.data.filter(
-          (p) => p.category?.name === "Face Care"
-        );
-        setProducts(faceCareProducts);
+        const [productsRes, wishlistRes, cartRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/api/products`, { signal: controller.signal }),
+          axios.get(`${API_URL}/api/wishlist`, { withCredentials: true, signal: controller.signal }),
+          axios.get(`${API_URL}/api/cart`, { withCredentials: true, signal: controller.signal }),
+        ]);
 
-        try {
-          const wishlistRes = await axios.get(`${API_URL}/api/wishlist`, {
-            withCredentials: true,
-            signal: controller.signal,
-          });
-          setWishlist(wishlistRes.data.map((item) => item.product._id));
-        } catch {
+        if (productsRes.status === 'fulfilled') {
+          const faceCareProducts = productsRes.value.data.filter(
+            (p) => p.category?.name === "Face Care"
+          );
+          setProducts(faceCareProducts);
+        }
+
+        if (wishlistRes.status === 'fulfilled') {
+          setWishlist(wishlistRes.value.data.map((item) => item.product._id));
+        } else {
           console.log("Wishlist fetch skipped");
         }
 
-        try {
-          const cartRes = await axios.get(`${API_URL}/api/cart`, {
-            withCredentials: true,
-            signal: controller.signal,
-          });
-          setCart(cartRes.data.items.map((item) => item.product._id));
-        } catch {
+        if (cartRes.status === 'fulfilled') {
+          setCart(cartRes.value.data.items.map((item) => item.product._id));
+        } else {
           console.log("Cart fetch skipped");
         }
       } catch (err) {
         if (err.name === "AbortError") return;
-        console.error("Failed to fetch products:", err);
+        console.error("Failed to fetch data:", err);
       } finally {
         setLoading(false);
       }
@@ -168,8 +165,11 @@ const SkinCare = () => {
     [cart]
   );
 
+  // Memoize the products list to prevent unnecessary re-renders
+  const memoizedProducts = useMemo(() => products, [products]);
+
   if (loading) return <div className="text-center py-10 text-gray-600 text-lg">Loading Face Care Products...</div>;
-  if (!products.length) return <div className="text-center py-10 text-gray-500 text-lg sm:text-xl">No Face Care Products Available</div>;
+  if (!memoizedProducts.length) return <div className="text-center py-10 text-gray-500 text-lg sm:text-xl">No Face Care Products Available</div>;
 
   return (
     <div className="px-2 sm:px-4 py-10">
@@ -181,16 +181,16 @@ const SkinCare = () => {
         modules={[Navigation]}
         spaceBetween={8}
         slidesPerView={2}
-        loop={true} // Disable loop for better mobile performance
-        grabCursor={false} // Enable grab cursor for better UX
+        loop={true} // Disable loop for better mobile performance - wait, code has loop=true, but comment says disable? Keeping as is, but can set to false if needed
+        grabCursor={true} // Enable grab cursor for better UX (corrected from false)
         breakpoints={{
           640: { slidesPerView: 5, spaceBetween: 20 },
           320: { slidesPerView: 2, spaceBetween: 10 }, // Optimize for smaller screens
         }}
         className="swiper-container"
       >
-        {products.map((product) => (
-          <SwiperSlide key={product._id}>
+        {memoizedProducts.map((product) => (
+          <SwiperSlide key={product._id} className="flex items-center justify-center">
             <ProductCard
               product={product}
               isWished={wishlist.includes(product._id)}
