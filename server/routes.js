@@ -13,6 +13,7 @@ const { isAdmin } = require('./AdminAuth');
 const { heroUpload, productUpload, categoryUpload, reelSingleUpload,offerUpload } = require('./config/multer');
 const dashboard = require('./controllers/DashboardContoller');
 const offerController = require('./controllers/OfferController');
+ const contactRequestController = require('./controllers/ContactController');
 const appRoutes = (app) => {
 
   // -------------------- USER AUTH & PROFILE --------------------
@@ -103,6 +104,17 @@ const appRoutes = (app) => {
   app.get('/api/offers', offerController.getAllOffers);
   app.put('/api/offers/:id', isAdmin, offerUpload.single('image'), offerController.updateOffer);
   app.delete('/api/offers/:id', isAdmin, offerController.deleteOffer);
+
+
+  //contact 
+    // Create contact request (public)
+  app.post('/api/contact-requests', contactRequestController.createContactRequest);
+  // Get all contact requests (admin only)
+  app.get('/api/contact-requests', isAdmin, contactRequestController.getContactRequests);
+  // Update contact request (admin only)
+  app.put('/api/contact-requests/:id', isAdmin, contactRequestController.updateContactRequest);
+  // Get pending request count (admin only)
+  app.get('/api/contact-requests/pending-count', isAdmin, contactRequestController.getPendingContactCount);
 };
 
 module.exports = appRoutes;

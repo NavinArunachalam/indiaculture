@@ -45,11 +45,12 @@ import Reviews from "./Pages/Admin/Reviews";
 import AdminLogin from "./Pages/Admin/AdminLogin";
 import UserDetails from "./Pages/Admin/UserDetails";
 import OfferPage from "./Pages/User/OfferPage";
-import Offer from "./Pages/Admin/Offer";
+import Offer from "./Pages/Admin/RequestCall";
 
 // Route Wrapper
 import AdminProtected from "./Pages/Admin/AdminProtected";
 import ReviewSection from './Pages/User/ReviewSection';
+import RequestCall from "./Pages/Admin/RequestCall";
 
 function App() {
   return (
@@ -76,9 +77,9 @@ function App() {
           <Route path="/reviews" element={<ReviewSection />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/offerspage" element={<OfferPage />} />
         </Route>
-        <Route path="/login" element={<Login />} />
 
         {/* --------- ADMIN LAYOUT ROUTES --------- */}
         <Route path="/admin">
@@ -90,7 +91,7 @@ function App() {
             <Route element={<AdminLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="dashboard" element={<Dashboard />} />
-
+              <Route path="contacts" element={<RequestCall />} />
               <Route path="categories" element={<Categories />} />
               <Route path="categories/add" element={<AddCategory />} />
               <Route path="categories/edit/:id" element={<EditCategory />} />
