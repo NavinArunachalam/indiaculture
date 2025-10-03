@@ -266,8 +266,8 @@ const HairCare = () => {
           spaceBetween={6}
           slidesPerView={2.2}
           loop={false}
-          grabCursor={true}
-          navigation
+          grabCursor={false}
+
           breakpoints={{
             1280: { slidesPerView: 5, spaceBetween: 12 },
             1024: { slidesPerView: 4, spaceBetween: 10 },
