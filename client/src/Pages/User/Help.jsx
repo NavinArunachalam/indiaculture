@@ -155,11 +155,6 @@ const Help = () => {
           Chat on WhatsApp
         </a>
       </footer>
-
-      {/* WhatsApp Floating Button */}
-      <a href="https://wa.me/918870757606" className="fixed bottom-5 right-5 z-50">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" className="w-16 transform transition duration-300 hover:scale-110" />
-      </a>
     </div>
   );
 };
