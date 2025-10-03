@@ -6,6 +6,22 @@ body {
   padding: 0;
 }
 
+.toastify-mobile {
+  font-size: 14px;
+  padding: 8px 16px;
+  max-width: 90%;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+}
+
+@media (max-width: 640px) {
+  .toastify-mobile {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
 button, a {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation; /* removes 300ms delay */

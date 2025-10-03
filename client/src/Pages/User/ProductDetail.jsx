@@ -348,14 +348,14 @@ const ProductDetail = ({ currentUser }) => {
                 </div>
                 <div className="flex flex-row sm:flex-row gap-1 mt-4">
                   <button
-                    className="w-1/2 sm:w-auto px-3 py-1 text-[11px] sm:text-base sm:px-8 sm:py-2 bg-green-600 text-white font-semibold rounded border-2 border-green-600 hover:bg-transparent hover:text-green-600 transition disabled:bg-gray-400 disabled:border-gray-400 disabled:cursor-not-allowed"
+                    className="w-1/2 sm:w-auto px-3 py-2 text-[13px] sm:text-base sm:px-8 sm:py-2 bg-green-600 text-white font-semibold rounded border-2 border-green-600 hover:bg-transparent hover:text-green-600 transition disabled:bg-gray-400 disabled:border-gray-400 disabled:cursor-not-allowed"
                     onClick={handleAddToCart}
                     disabled={inCart || product.stock === 0}
                   >
                     {inCart ? "In Cart" : "Add to Cart"}
                   </button>
                   <button
-                    className="w-1/2 sm:w-auto px-3 py-1 text-[11px] sm:text-base sm:px-8 sm:py-2 bg-green-600 text-white font-semibold rounded border-2 border-green-600 hover:bg-transparent hover:text-green-600 transition disabled:bg-gray-400 disabled:border-gray-400 disabled:cursor-not-allowed"
+                    className="w-1/2 sm:w-auto px-3 py-2 text-[13px] sm:text-base sm:px-8 sm:py-2 bg-green-600 text-white font-semibold rounded border-2 border-green-600 hover:bg-transparent hover:text-green-600 transition disabled:bg-gray-400 disabled:border-gray-400 disabled:cursor-not-allowed"
                     onClick={handleBuyNow}
                     disabled={product.stock === 0}
                   >
