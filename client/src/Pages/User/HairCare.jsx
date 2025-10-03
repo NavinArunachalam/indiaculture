@@ -269,10 +269,10 @@ const HairCare = () => {
           grabCursor={false}
 
           breakpoints={{
-            1280: { slidesPerView: 5, spaceBetween: 12 },
-            1024: { slidesPerView: 4, spaceBetween: 10 },
-            640: { slidesPerView: 3, spaceBetween: 8 },
-            320: { slidesPerView: 2.2, spaceBetween: 6 },
+            1280: { slidesPerView: 5, spaceBetween: 6 },
+            1024: { slidesPerView: 4, spaceBetween: 6 },
+            640: { slidesPerView: 3, spaceBetween: 6 },
+            320: { slidesPerView: 2, spaceBetween: 2 },
           }}
           className="px-1.5"
         >
