@@ -45,7 +45,7 @@ import Reviews from "./Pages/Admin/Reviews";
 import AdminLogin from "./Pages/Admin/AdminLogin";
 import UserDetails from "./Pages/Admin/UserDetails";
 import OfferPage from "./Pages/User/OfferPage";
-import Offer from "./Pages/Admin/RequestCall";
+import Offer from "./Pages/Admin/Offer";
 
 // Route Wrapper
 import AdminProtected from "./Pages/Admin/AdminProtected";
@@ -77,9 +77,9 @@ function App() {
           <Route path="/reviews" element={<ReviewSection />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/help" element={<Help />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/offerspage" element={<OfferPage />} />
         </Route>
-          <Route path="/login" element={<Login />} />
 
         {/* --------- ADMIN LAYOUT ROUTES --------- */}
         <Route path="/admin">

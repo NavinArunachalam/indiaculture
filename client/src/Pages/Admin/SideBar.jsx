@@ -26,7 +26,7 @@ const Sidebar = () => {
           <h1 className="text-lg font-bold text-white">India Culture</h1>
         </div>
         <p className="text-sm text-gray-400 mt-1 pl-7">Super Admin</p>
-  <div className=" border-b-1 text-gray-500 w-57 mt-3  "></div>
+        <div className=" border-b-1 text-gray-500 w-57 mt-3  "></div>
 
       </div>
       {/* Navigation */}
@@ -57,8 +57,8 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
-  <div className=" border-b-1 text-gray-500 w-65  "></div>
-         <div className="flex pl-10 pt-3 text-xs  ">
+        <div className=" border-b-1 text-gray-500 w-65  "></div>
+        <div className="flex pl-10 pt-3 text-xs  ">
           <span className="text-grey-600">Developed By Procols.</span>
         </div>
       </nav>
