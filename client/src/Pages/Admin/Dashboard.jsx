@@ -34,7 +34,7 @@ const Dashboard = () => {
       setSalesByCategory(data.salesByCategory || []);
       setRecentOrders(data.recentOrders || []);
 
-      // Monthly stats for current month
+      // Monthly stats for current month (using API-provided data)
       const now = new Date();
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
@@ -46,14 +46,16 @@ const Dashboard = () => {
         const d = new Date(order.createdAt);
         if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
           monthlyCustomers.add(order.user?.name || "N/A");
-          const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-          if (order.is_paid) monthlySalesAmount += total;
+          if (order.is_paid) {
+            const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            monthlySalesAmount += total;
+          }
         }
       });
 
       setStats({
         totalSales: monthlySalesAmount,
-        totalOrders: data.stats.totalOrders || 0, // Use API-provided totalOrders
+        totalOrders: data.stats.totalOrders || 0, // Use API-provided totalOrders for current month
         totalCustomers: monthlyCustomers.size,
       });
 

@@ -1,11 +1,23 @@
-// services/DashboardService.js
+
 const Order = require("../models/order");
 const Product = require("../models/product");
 const Category = require("../models/category");
 
 const getDashboardStats = async () => {
-  // Total stats
+  // Get current month and year
+  const now = new Date();
+  const currentMonth = now.getMonth(); // 0-based (0 = January, 11 = December)
+  const currentYear = now.getFullYear();
+  const startOfMonth = new Date(currentYear, currentMonth, 1);
+  const endOfMonth = new Date(currentYear, currentMonth + 1, 1);
+
+  // Total stats for current month
   const totalSalesAgg = await Order.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+      },
+    },
     {
       $group: {
         _id: null,
@@ -17,8 +29,10 @@ const getDashboardStats = async () => {
   const totalSales = totalSalesAgg[0]?.totalSales || 0;
   const totalOrders = totalSalesAgg[0]?.totalOrders || 0;
 
-  // Total customers
-  const totalCustomers = await Order.distinct("user").then((arr) => arr.length);
+  // Total customers (distinct users who placed orders in the current month)
+  const totalCustomers = await Order.distinct("user", {
+    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+  }).then((arr) => arr.length);
 
   // Top products (sold count)
   const topProductsAgg = await Order.aggregate([
@@ -79,7 +93,7 @@ const getDashboardStats = async () => {
     { $project: { name: "$_id", totalSales: 1, _id: 0 } },
   ]);
 
-  // Recent orders
+  // Recent orders (still limited to 5, as per original logic)
   const recentOrders = await Order.find({})
     .sort({ createdAt: -1 })
     .limit(5)
