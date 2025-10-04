@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [salesTarget, setSalesTarget] = useState("50000");
   const [refreshKey, setRefreshKey] = useState(0);
 
+  // Fetch dashboard data
   const fetchDashboard = async () => {
     setLoading(true);
     setError(null);
@@ -26,29 +27,31 @@ const Dashboard = () => {
         params: { t: Date.now() }, // Cache-busting
       });
       const data = res.data;
-
-      console.log("API Response:", data); // Debug: Log full response
-      console.log("Total Orders from API:", data.stats.totalOrders); // Debug: Log totalOrders
+      console.log("Raw API Response:", data);
 
       setTopProducts(data.topProducts || []);
       setSalesByCategory(data.salesByCategory || []);
       setRecentOrders(data.recentOrders || []);
 
-      // Monthly stats for current month (using API-provided data)
+      // --- Fixed Stats Calculation for Current Month ---
       const now = new Date();
       const currentMonth = now.getMonth();
       const currentYear = now.getFullYear();
 
-      let monthlySalesAmount = 0;
+      let monthlySalesAmount = 0; // sum of current month paid orders
       let monthlyCustomers = new Set();
       let currentMonthOrders = 0;
 
       (data.recentOrders || []).forEach((order) => {
         const d = new Date(order.createdAt);
-        if (d.getMonth() === currentMonth && d.getFullYear() === currentYear) {
+        if (
+          d.getMonth() === currentMonth &&
+          d.getFullYear() === currentYear &&
+          order.status.toLowerCase() !== "cancelled"
+        ) {
           monthlyCustomers.add(order.user?.name || "N/A");
           if (order.is_paid) {
-            const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            const total = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
             monthlySalesAmount += total;
           }
           currentMonthOrders++;
@@ -57,30 +60,22 @@ const Dashboard = () => {
 
       setStats({
         totalSales: monthlySalesAmount,
-        totalOrders: currentMonthOrders, // Use calculated current month orders
+        totalOrders: currentMonthOrders,
         totalCustomers: monthlyCustomers.size,
       });
 
-      // Monthly Sales chart data for all months
-      const months = [];
-      const monthlyMap = {};
-      for (let i = 0; i < 12; i++) {
-        const d = new Date(currentYear, i, 1);
-        const monthName = d.toLocaleString("default", { month: "short" });
-        months.push(monthName);
-        monthlyMap[monthName] = 0;
-      }
+      // Monthly sales (12 months) – unchanged for chart
+      const months = Array.from({ length: 12 }, (_, i) =>
+        new Date(currentYear, i, 1).toLocaleString("default", { month: "short" })
+      );
 
-      (data.recentOrders || []).forEach((order) => {
-        if (!order.is_paid) return;
-        const d = new Date(order.createdAt);
-        if (d.getFullYear() !== currentYear) return;
-        const month = d.toLocaleString("default", { month: "short" });
-        const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
-        monthlyMap[month] += total;
-      });
+      const salesData = months.map((month, i) => ({
+        month,
+        total: Number(data.monthlySales?.[i] || 0),
+      }));
 
-      setMonthlySales(months.map((month) => ({ month, total: monthlyMap[month] })));
+      console.log("Processed Monthly Sales:", salesData); // Debug log
+      setMonthlySales(salesData);
     } catch (err) {
       console.error("Failed to fetch dashboard data:", err);
       setError("Failed to load dashboard data. Please try again.");
@@ -89,11 +84,17 @@ const Dashboard = () => {
     }
   };
 
+  // Draw sales line chart
   const drawSalesChart = () => {
     if (!monthlySales.length) return;
+
     const ctx = document.getElementById("salesLineChart");
     if (!ctx) return;
+
     if (salesChart) salesChart.destroy();
+
+    const context = ctx.getContext("2d");
+    context.clearRect(0, 0, ctx.width, ctx.height);
 
     const chart = new Chart(ctx, {
       type: "line",
@@ -110,34 +111,46 @@ const Dashboard = () => {
             pointRadius: 5,
             pointBackgroundColor: "#52796f",
           },
-          salesTarget > 0
+          Number(salesTarget) > 0
             ? {
-              label: "Sales Target",
-              data: monthlySales.map(() => salesTarget),
-              borderColor: "red",
-              borderWidth: 2,
-              borderDash: [5, 5],
-              fill: false,
-              pointRadius: 0,
-            }
+                label: "Sales Target",
+                data: monthlySales.map(() => Number(salesTarget)),
+                borderColor: "red",
+                borderWidth: 2,
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0,
+              }
             : null,
         ].filter(Boolean),
       },
       options: {
         responsive: true,
         plugins: { legend: { display: false } },
-        scales: { x: { grid: { display: false } }, y: { beginAtZero: true } },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            ticks: { callback: (value) => "₹" + value.toLocaleString() },
+          },
+        },
       },
     });
 
     setSalesChart(chart);
   };
 
+  // Draw category bar chart
   const drawCategoryChart = () => {
     if (!salesByCategory.length) return;
+
     const ctx = document.getElementById("categoryBarChart");
     if (!ctx) return;
+
     if (categoryChart) categoryChart.destroy();
+
+    const context = ctx.getContext("2d");
+    context.clearRect(0, 0, ctx.width, ctx.height);
 
     const chart = new Chart(ctx, {
       type: "bar",
@@ -156,7 +169,13 @@ const Dashboard = () => {
       options: {
         responsive: true,
         plugins: { legend: { display: false } },
-        scales: { x: { grid: { display: false } }, y: { beginAtZero: true } },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            beginAtZero: true,
+            ticks: { callback: (value) => "₹" + value.toLocaleString() },
+          },
+        },
       },
     });
 
@@ -168,22 +187,11 @@ const Dashboard = () => {
   }, [refreshKey]);
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && monthlySales.length > 0) {
       drawSalesChart();
       drawCategoryChart();
     }
   }, [monthlySales, salesByCategory, salesTarget, loading]);
-
-  // Auto-refresh every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRefreshKey((prev) => prev + 1);
-    }, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
-  if (error) return <div className="flex justify-center items-center min-h-screen text-red-500">{error}</div>;
 
   return (
     <main className="p-8 overflow-y-auto">
@@ -218,11 +226,11 @@ const Dashboard = () => {
       <section className="flex gap-8 mb-10 flex-wrap">
         <div className="flex-1 min-w-[400px] bg-white p-6 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Sales Over Time (12 Months)</h2>
-          <canvas id="salesLineChart"></canvas>
+          <canvas id="salesLineChart" width="400" height="200"></canvas>
         </div>
         <div className="flex-1 min-w-[400px] bg-white p-6 rounded-xl shadow-md">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Sales by Category</h2>
-          <canvas id="categoryBarChart"></canvas>
+          <canvas id="categoryBarChart" width="400" height="200"></canvas>
         </div>
       </section>
 
@@ -242,22 +250,30 @@ const Dashboard = () => {
             <tbody>
               {recentOrders.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-4 py-2 text-center text-gray-500">No recent orders</td>
+                  <td colSpan="4" className="px-4 py-2 text-center text-gray-500">
+                    No recent orders
+                  </td>
                 </tr>
               ) : (
                 recentOrders.slice(0, 5).map((order) => {
-                  const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+                  const total = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
                   return (
                     <tr key={order._id} className="hover:bg-gray-100">
                       <td className="px-4 py-2">#{order.code}</td>
                       <td className="px-4 py-2">{order.user?.name || "N/A"}</td>
                       <td className="px-4 py-2">
                         <span
-                          className={`px-2 py-1 rounded-full text-white text-xs font-semibold ${order.status?.toLowerCase() === "pending" ? "bg-yellow-500" :
-                              order.status?.toLowerCase() === "shipped" ? "bg-teal-600" :
-                                order.status?.toLowerCase() === "delivered" ? "bg-gray-800" :
-                                  order.status?.toLowerCase() === "cancelled" ? "bg-red-600" : "bg-gray-500"
-                            }`}
+                          className={`px-2 py-1 rounded-full text-white text-xs font-semibold ${
+                            order.status?.toLowerCase() === "pending"
+                              ? "bg-yellow-500"
+                              : order.status?.toLowerCase() === "shipped"
+                              ? "bg-teal-600"
+                              : order.status?.toLowerCase() === "delivered"
+                              ? "bg-gray-800"
+                              : order.status?.toLowerCase() === "cancelled"
+                              ? "bg-red-600"
+                              : "bg-gray-500"
+                          }`}
                         >
                           {order.status}
                         </span>
@@ -275,7 +291,10 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold text-gray-700 mb-4">Top Products</h2>
           <ul>
             {topProducts.map((p) => (
-              <li key={p._id} className="flex justify-between border-b capitalize border-gray-200 py-2 font-semibold text-[#52796f]">
+              <li
+                key={p._id}
+                className="flex justify-between border-b capitalize border-gray-200 py-2 font-semibold text-[#52796f]"
+              >
                 <span>{p.name}</span>
                 <span>{p.sold} sold</span>
               </li>

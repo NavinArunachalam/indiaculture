@@ -100,12 +100,43 @@ const getDashboardStats = async () => {
     .populate("user", "name email")
     .lean();
 
+
+  const startOfYear = new Date(currentYear, 0, 1);
+  const endOfYear = new Date(currentYear + 1, 0, 1);
+
+  const monthlySalesAgg = await Order.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: startOfYear, $lt: endOfYear },
+        is_paid: true // only count paid orders
+      },
+    },
+    { $unwind: "$items" },
+    {
+      $group: {
+        _id: { month: { $month: "$createdAt" } },
+        total: { $sum: { $multiply: ["$items.price", "$items.quantity"] } },
+      },
+    },
+    { $sort: { "_id.month": 1 } },
+  ]);
+
+  // Convert to [Jan..Dec] format
+  const monthlySales = Array(12).fill(0);
+  monthlySalesAgg.forEach((s) => {
+    monthlySales[s._id.month - 1] = s.total; // month is 1–12
+  });
+
+
   return {
     stats: { totalSales, totalOrders, totalCustomers },
     topProducts: topProductsAgg,
     salesByCategory,
     recentOrders,
+    monthlySales,
   };
 };
+// Add this inside getDashboardStats before return
+
 
 module.exports = { getDashboardStats };
