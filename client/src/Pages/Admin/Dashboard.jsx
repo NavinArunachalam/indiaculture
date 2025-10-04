@@ -41,6 +41,7 @@ const Dashboard = () => {
 
       let monthlySalesAmount = 0;
       let monthlyCustomers = new Set();
+      let currentMonthOrders = 0;
 
       (data.recentOrders || []).forEach((order) => {
         const d = new Date(order.createdAt);
@@ -50,16 +51,17 @@ const Dashboard = () => {
             const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
             monthlySalesAmount += total;
           }
+          currentMonthOrders++;
         }
       });
 
       setStats({
         totalSales: monthlySalesAmount,
-        totalOrders: data.stats.totalOrders || 0, // Use API-provided totalOrders for current month
+        totalOrders: currentMonthOrders, // Use calculated current month orders
         totalCustomers: monthlyCustomers.size,
       });
 
-      // Monthly Sales chart data
+      // Monthly Sales chart data for all months
       const months = [];
       const monthlyMap = {};
       for (let i = 0; i < 12; i++) {
@@ -74,7 +76,7 @@ const Dashboard = () => {
         const d = new Date(order.createdAt);
         if (d.getFullYear() !== currentYear) return;
         const month = d.toLocaleString("default", { month: "short" });
-        const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0) + (order.shipping || 0);
+        const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
         monthlyMap[month] += total;
       });
 
@@ -110,14 +112,14 @@ const Dashboard = () => {
           },
           salesTarget > 0
             ? {
-                label: "Sales Target",
-                data: monthlySales.map(() => salesTarget),
-                borderColor: "red",
-                borderWidth: 2,
-                borderDash: [5, 5],
-                fill: false,
-                pointRadius: 0,
-              }
+              label: "Sales Target",
+              data: monthlySales.map(() => salesTarget),
+              borderColor: "red",
+              borderWidth: 2,
+              borderDash: [5, 5],
+              fill: false,
+              pointRadius: 0,
+            }
             : null,
         ].filter(Boolean),
       },
@@ -243,20 +245,19 @@ const Dashboard = () => {
                   <td colSpan="4" className="px-4 py-2 text-center text-gray-500">No recent orders</td>
                 </tr>
               ) : (
-                recentOrders.map((order) => {
-                  const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0) + (order.shipping || 0);
+                recentOrders.slice(0, 5).map((order) => {
+                  const total = order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
                   return (
                     <tr key={order._id} className="hover:bg-gray-100">
                       <td className="px-4 py-2">#{order.code}</td>
                       <td className="px-4 py-2">{order.user?.name || "N/A"}</td>
                       <td className="px-4 py-2">
                         <span
-                          className={`px-2 py-1 rounded-full text-white text-xs font-semibold ${
-                            order.status?.toLowerCase() === "pending" ? "bg-yellow-500" :
-                            order.status?.toLowerCase() === "shipped" ? "bg-teal-600" :
-                            order.status?.toLowerCase() === "delivered" ? "bg-gray-800" :
-                            order.status?.toLowerCase() === "cancelled" ? "bg-red-600" : "bg-gray-500"
-                          }`}
+                          className={`px-2 py-1 rounded-full text-white text-xs font-semibold ${order.status?.toLowerCase() === "pending" ? "bg-yellow-500" :
+                              order.status?.toLowerCase() === "shipped" ? "bg-teal-600" :
+                                order.status?.toLowerCase() === "delivered" ? "bg-gray-800" :
+                                  order.status?.toLowerCase() === "cancelled" ? "bg-red-600" : "bg-gray-500"
+                            }`}
                         >
                           {order.status}
                         </span>

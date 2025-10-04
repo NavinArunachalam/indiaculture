@@ -1,4 +1,3 @@
-
 const Order = require("../models/order");
 const Product = require("../models/product");
 const Category = require("../models/category");
@@ -93,10 +92,11 @@ const getDashboardStats = async () => {
     { $project: { name: "$_id", totalSales: 1, _id: 0 } },
   ]);
 
-  // Recent orders (still limited to 5, as per original logic)
-  const recentOrders = await Order.find({})
+  // Recent orders for the current month
+  const recentOrders = await Order.find({
+    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+  })
     .sort({ createdAt: -1 })
-    .limit(5)
     .populate("user", "name email")
     .lean();
 

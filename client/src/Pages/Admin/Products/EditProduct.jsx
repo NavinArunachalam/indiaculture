@@ -8,6 +8,7 @@ const EditProduct = () => {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [name, setName] = useState("");
+  const [description, setDescription] = useState(""); // New state for description
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [oldprice, setOldPrice] = useState("");
@@ -15,7 +16,7 @@ const EditProduct = () => {
   const [stock, setStock] = useState("");
   const [bestsell, setBestsell] = useState(false);
   const [status, setStatus] = useState("Active");
-  const [currentImages, setCurrentImages] = useState([]); // [{url, public_id}]
+  const [currentImages, setCurrentImages] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -31,6 +32,7 @@ const EditProduct = () => {
         ]);
         const product = productRes.data;
         setName(product.name);
+        setDescription(product.description || ""); // Set description from API
         setCategory(product.category?._id || "");
         setNewPrice(product.new_price);
         setOldPrice(product.old_price);
@@ -82,6 +84,7 @@ const EditProduct = () => {
     try {
       const formData = new FormData();
       formData.append("name", name);
+      formData.append("description", description); // Append description
       formData.append("category", category);
       formData.append("new_price", newprice);
       formData.append("old_price", oldprice);
@@ -130,7 +133,6 @@ const EditProduct = () => {
     <div className="min-h-screen bg-gray-50 flex justify-center p-6 font-['Inter'] text-lg">
       <div className="w-full max-w-6xl bg-white rounded-lg shadow p-8 flex flex-col lg:flex-row relative">
         <form onSubmit={handleSubmit} className="flex-1 space-y-6 pr-0 lg:pr-6">
-
           {/* Name */}
           <div>
             <label className="block text-base font-medium text-gray-700 mb-2">Name *</label>
@@ -140,6 +142,19 @@ const EditProduct = () => {
               onChange={(e) => setName(e.target.value)}
               required
               className="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-base"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-base font-medium text-gray-700 mb-2">Description *</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              rows={4}
+              className="block w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-base"
+              placeholder="Enter product description"
             />
           </div>
 
