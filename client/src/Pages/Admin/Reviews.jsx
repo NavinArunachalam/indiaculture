@@ -112,12 +112,6 @@ const CustomerReviews = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Customer Reviews</h1>
           <div className="flex space-x-3">
-            <Link
-              to="/admin/reviews/add"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-md text-base font-medium transition-colors"
-            >
-              Add Review
-            </Link>
             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
               {filteredReviews.length} reviews
             </span>

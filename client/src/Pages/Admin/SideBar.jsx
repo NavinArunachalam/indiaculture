@@ -59,7 +59,7 @@ const Sidebar = () => {
         </ul>
   <div className=" border-b-1 text-gray-500 w-65  "></div>
          <div className="flex pl-10 pt-3 text-xs  ">
-          <span className="text-grey-600">Made By Procols</span>
+          <span className="text-grey-600">Developed By Procols.</span>
         </div>
       </nav>
     </aside>
