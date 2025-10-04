@@ -115,6 +115,7 @@ const appRoutes = (app) => {
   app.put('/api/contact-requests/:id', isAdmin, contactRequestController.updateContactRequest);
   // Get pending request count (admin only)
   app.get('/api/contact-requests/pending-count', isAdmin, contactRequestController.getPendingContactCount);
+  app.delete('/api/contact-requests/:id', isAdmin, contactRequestController.deleteContactRequest);
 };
 
 module.exports = appRoutes;
