@@ -8,12 +8,12 @@ const UserLayout = () => {
   return (
     <div className="user-layout">
       <Navbar />
-      <main style={{ minHeight: "80vh", padding: "1rem" }}>
+      <main >
         <Outlet />
       </main>
-        <Whatsapp />
+      <Whatsapp />
       <Footer />
-    
+
 
     </div>
   );

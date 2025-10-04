@@ -25,7 +25,7 @@ const FAQs = [
   {
     question: "5. How can I contact customer support?",
     answer:
-      "Our customer support team is here to assist you. You can reach us via email at support@indiaculture.store or call us at +91-XXXXXXXXXX. We're available Monday to Friday, from 9:00 AM to 6:00 PM IST.",
+      "Our customer support team is here to assist you. You can reach us via email at support@indiaculture.store or call us at +91-9003689821. We're available Monday to Friday, from 9:00 AM to 6:00 PM IST.",
   },
 ];
 

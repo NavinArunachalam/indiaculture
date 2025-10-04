@@ -78,7 +78,7 @@ const Help = () => {
         <h2 className="text-2xl mt-4 text-gray-600">Glow Naturally Every Day</h2>
         <p className="mt-2 text-gray-500">Pure • Organic • Dermatologist Approved</p>
         <p className="mt-2 text-green-600">Trusted by 10,000+ Customers</p>
-        <a href="#products" className="mt-4 px-6 py-3 rounded-full bg-green-600 text-white font-medium hover:bg-green-700 transition">Explore Products</a>
+        <a href="/" className="mt-4 px-6 py-3 rounded-full bg-green-600 text-white font-medium hover:bg-green-700 transition">Explore Products</a>
         <img src="https://images.pexels.com/photos/3764013/pexels-photo-3764013.jpeg" alt="Skin Care Model" className="mt-6 rounded shadow-lg max-w-full h-auto transform transition duration-300 hover:scale-105" />
       </header>
 
@@ -181,7 +181,7 @@ const Help = () => {
         <p>Phone: +91 90036 89821</p>
         <p>Address: 202, Bhavani Main Road, Vaikalamedu, Chithode, Erode - 638102, Tamil Nadu</p>
         <p>Working Hours: Mon - Sat (10 AM – 7 PM)</p>
-        <a href="https://wa.me/918870757606" target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold">Chat on WhatsApp</a>
+        <a href="https://wa.me/919003689821" target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold">Chat on WhatsApp</a>
       </footer>
     </div>
   );

@@ -77,9 +77,9 @@ function App() {
           <Route path="/reviews" element={<ReviewSection />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/offerspage" element={<OfferPage />} />
         </Route>
+          <Route path="/login" element={<Login />} />
 
         {/* --------- ADMIN LAYOUT ROUTES --------- */}
         <Route path="/admin">

@@ -185,7 +185,7 @@ const ReviewOrder = () => {
         city,
         state,
         pincode,
-        payment_method: "COD",
+        payment_method: "UPI",
         subtotal,
         shipping,
         total,
@@ -200,11 +200,11 @@ const ReviewOrder = () => {
 
       let message = `*New Order Placed!*\n\nName: ${name}\nPhone: ${phone}\nAddress: ${addr}, ${city}, ${state} - ${pincode}\n\nItems:\n`;
       validItems.forEach((item, idx) => {
-        message += `${idx + 1}. ${item.product.name} - Qty: ${item.quantity} - ₹${item.product.new_price}\n`;
+        message += `${idx + 1}.${item.product.name} - Qty: ${item.quantity} - ₹${item.product.new_price}\n`;
       });
       message += `\nSubtotal: ₹${subtotal}\nShipping: ₹${shipping}\nTotal: ₹${total}\nPayment: UPI`;
 
-      const whatsappNumber = "918870757606";
+      const whatsappNumber = "919003689821";
       window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, "_blank");
 
       Toastify({
