@@ -6,11 +6,11 @@ import Footer from "../../components/Footer";
 import Whatsapp from "./Whatsapp";
 const UserLayout = () => {
   return (
-    <div className="user-layout">
+    <div className="user-layout ">
       <Navbar />
-      <main >
+       <main style={{ minHeight: '80vh'}}>
         <Outlet />
-      </main>
+      </main> 
       <Whatsapp />
       <Footer />
 
