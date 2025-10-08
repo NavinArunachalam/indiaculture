@@ -51,7 +51,7 @@ const OrderPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen p-4">
       <div className="max-w-5xl mx-auto space-y-6">
-        <h2 className="text-3xl font-semibold text-green-800 text-center mb-4">My Orders</h2>
+        <h1 className="text-3xl font-semibold text-green-800 text-center mb-4">My Orders</h1>
 
         {orders.map((order) => {
           const itemsTotal = order.items?.reduce(

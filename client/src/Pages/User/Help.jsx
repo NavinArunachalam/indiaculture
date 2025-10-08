@@ -42,7 +42,7 @@ const Help = () => {
   const validate = () => {
     const { name, phoneNumber, skinType, skinConcern } = formData;
     if (!name || !phoneNumber || !skinType || !skinConcern) return "Please fill in all fields";
-    if (!/^[\+]?[0-9]{6,15}$/.test(phoneNumber)) return "Invalid phone number";
+    if (!/^[+]?[0-9]{6,15}$/.test(phoneNumber)) return "Invalid phone number";
     return null;
   };
 

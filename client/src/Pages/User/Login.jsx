@@ -54,7 +54,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `${API_URL}/api/login`,
         { email, password },
         { withCredentials: true }
@@ -81,7 +81,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post(
+   await axios.post(
         `${API_URL}/api/register`,
         { name, email, password, mobile: phone },
         { withCredentials: true }

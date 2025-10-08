@@ -42,12 +42,15 @@ const OffersPage = () => {
       try {
         const wishlistRes = await axios.get(`${API_URL}/api/wishlist`, { withCredentials: true });
         setWishlist(wishlistRes.data.map((item) => item.product._id));
-      } catch {}
-
+      } catch (error) {
+  console.error(error);
+}
       try {
         const cartRes = await axios.get(`${API_URL}/api/cart`, { withCredentials: true });
         setCart(cartRes.data.items.map((item) => item.product._id));
-      } catch {}
+      } catch (error) {
+  console.error(error);
+}
     };
 
     fetchData();
@@ -188,9 +191,9 @@ const OffersPage = () => {
         </div>
       </div>
 
-      <h2 className="text-center text-xl sm:text-2xl font-bold mb-8 relative after:content-[''] after:block after:w-16 after:h-1 after:bg-green-600 after:mx-auto after:mt-2 after:rounded">
+      <h1 className="text-center text-xl sm:text-2xl font-bold mb-8 relative after:content-[''] after:block after:w-16 after:h-1 after:bg-green-600 after:mx-auto after:mt-2 after:rounded">
         Special Offers
-      </h2>
+      </h1>
 
       {offers.length === 0 ? (
         <p className="text-center text-gray-500 text-base sm:text-lg">No offers available at the moment.</p>

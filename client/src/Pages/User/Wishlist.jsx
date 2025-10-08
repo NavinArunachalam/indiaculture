@@ -50,9 +50,9 @@ const Wishlist = () => {
   if (loading) return <div className="text-center py-10">Loading wishlist...</div>;
   if (!wishlistProducts.length)
     return (
-      <h2 className="text-center text-lg sm:text-xl font-semibold text-gray-500 py-10">
+      <h1 className="text-center text-lg sm:text-xl font-semibold text-gray-500 py-10">
         Your wishlist is empty 💔
-      </h2>
+      </h1>
     );
 
   return (

@@ -24,7 +24,7 @@ const ProfileEditPage = () => {
       }
     };
     fetchProfile();
-  }, []);
+  }, [API_URL]);
 
   // Handle input changes
   const handleChange = (e) => {
