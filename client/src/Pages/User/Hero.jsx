@@ -8,11 +8,19 @@ import { PrevArrow, NextArrow } from "../../components/ui/Arrow";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Transform image URL for optimization
 const transformImageUrl = (url, width) =>
   url.replace("/upload/", `/upload/w_${width},q_auto,f_webp/`);
 
 const Hero = () => {
-  const [slides, setSlides] = useState([]);
+  // 1️⃣ Hardcode a first slide so user sees something immediately
+  const initialSlide = {
+    productId: "default",
+    productName: "Welcome to Our Store",
+    image: "/hero1.jpg", // Make sure you have a placeholder image
+  };
+
+  const [slides, setSlides] = useState([initialSlide]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -21,14 +29,18 @@ const Hero = () => {
         const response = await axios.get(`${API_URL}/api/hero`, {
           headers: { "Cache-Control": "no-cache" },
         });
+
         const data = response.data
-          .map(hero => ({
+          .map((hero) => ({
             productId: hero.product?._id,
             productName: hero.product?.name || "Hero Slide",
             image: transformImageUrl(hero.images?.[0]?.url, 800),
           }))
-          .filter(slide => slide.image); // Only require image
-        setSlides(data);
+          .filter((slide) => slide.image);
+
+        if (data.length > 0) {
+          setSlides([initialSlide, ...data]); // Keep initial slide first, then API slides
+        }
       } catch (err) {
         console.error("Failed to fetch slides:", err);
       } finally {
@@ -38,16 +50,6 @@ const Hero = () => {
 
     fetchSlides();
   }, []);
-
-  useEffect(() => {
-    if (slides.length > 0) {
-      const link = document.createElement("link");
-      link.rel = "preload";
-      link.as = "image";
-      link.href = slides[0].image;
-      document.head.appendChild(link);
-    }
-  }, [slides]);
 
   const settings = useMemo(
     () => ({
@@ -66,20 +68,15 @@ const Hero = () => {
     []
   );
 
-  if (isLoading) {
-    return (
-      <section className="w-full h-[200px] sm:h-[200px] md:h-[400px] lg:h-[410px] bg-gray-200 animate-pulse rounded-lg"></section>
-    );
-  }
-
-  if (slides.length === 0) return null;
-
   return (
     <section className="w-full">
       <Slider {...settings}>
         {slides.map((slide, index) => (
           <div key={index} className="outline-none w-full flex flex-col items-center">
-            <Link to={`/productdetails/${slide.productId}`} className="w-full">
+            <Link
+              to={slide.productId === "default" ? "#" : `/productdetails/${slide.productId}`}
+              className="w-full"
+            >
               <img
                 src={slide.image}
                 alt={slide.productName}
