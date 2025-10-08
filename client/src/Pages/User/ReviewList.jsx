@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { FaStar, FaStarHalfAlt, FaRegStar, FaQuoteLeft } from "react-icons/fa";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Pagination, Autoplay, Lazy } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules"; // Remove Lazy
 import useSWR from "swr";
 import axios from "axios";
 
@@ -14,31 +14,31 @@ const fetcher = url => axios.get(url, { withCredentials: true }).then(res => res
 const Reviews = () => {
   const [isSessionReady, setIsSessionReady] = useState(false);
 
-  // Check for session cookie (adjust cookie name as needed)
+  // SSR-safe session cookie check
   useEffect(() => {
     const checkSession = () => {
-      // Replace 'sessionid' with your actual cookie name, or use a generic check
-      const hasCookie = document.cookie.includes("sessionid");
+      const hasCookie = typeof window !== "undefined" && document.cookie.includes("sessionid");
       setIsSessionReady(hasCookie);
     };
     checkSession();
-    // Poll briefly to handle async cookie setting
-    const interval = setInterval(checkSession, 500);
-    return () => clearInterval(interval);
+    if (typeof window !== "undefined") {
+      const interval = setInterval(checkSession, 500);
+      return () => clearInterval(interval);
+    }
   }, []);
 
   const { data: reviewsData, error } = useSWR(
-    isSessionReady ? `${API_URL}/api/reviews?all=true` : null,
+    isSessionReady && API_URL ? `${API_URL}/api/reviews?all=true` : null,
     fetcher,
     {
       revalidateOnFocus: false,
-      dedupingInterval: 60000, // Cache for 60s
-      errorRetryCount: 3, // Retry 3 times on failure
-      errorRetryInterval: 2000, // Wait 2s between retries
+      dedupingInterval: 60000,
+      errorRetryCount: 3,
+      errorRetryInterval: 2000,
     }
   );
 
-  // Log API response for debugging
+  // Debug API response
   useEffect(() => {
     console.log("API Response:", reviewsData, "Error:", error);
   }, [reviewsData, error]);
@@ -73,13 +73,14 @@ const Reviews = () => {
 
   const swiperSettings = useMemo(
     () => ({
-      modules: [Pagination, Autoplay, Lazy],
+      modules: [Pagination, Autoplay],
       pagination: { clickable: true },
       autoplay: { delay: 2500, disableOnInteraction: false },
       spaceBetween: 16,
       slidesPerView: 1,
       speed: 800,
-      lazy: { loadPrevNext: true },
+      lazy: true, // Enable lazy loading
+      lazyPreloadPrevNext: 1, // Preload 1 slide before/after
     }),
     []
   );
@@ -115,8 +116,6 @@ const Reviews = () => {
       <h1 className="text-center pt-6 mb-6 font-[Times] text-[#2e5939] text-2xl sm:text-3xl md:text-4xl leading-[1.08] font-bold">
         Customer Reviews
       </h1>
-
-      {/* Mobile Swiper (2 stacked) */}
       <div className="md:hidden">
         <Swiper {...swiperSettings} className="w-full h-[300px]">
           {groupedReviewsMobile.map((pair, index) => (
@@ -158,8 +157,6 @@ const Reviews = () => {
           ))}
         </Swiper>
       </div>
-
-      {/* Desktop Swiper (3 side-by-side) */}
       <div className="hidden md:block">
         <Swiper {...swiperSettings} className="w-full h-[170px]">
           {groupedReviewsDesktop.map((trio, index) => (
