@@ -1,9 +1,9 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FaStar, FaStarHalfAlt, FaRegStar, FaQuoteLeft } from "react-icons/fa";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Pagination, Autoplay } from "swiper/modules"; // Remove Lazy
+import { Pagination, Autoplay } from "swiper/modules";
 import useSWR from "swr";
 import axios from "axios";
 
@@ -12,23 +12,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 const fetcher = url => axios.get(url, { withCredentials: true }).then(res => res.data.data);
 
 const Reviews = () => {
-  const [isSessionReady, setIsSessionReady] = useState(false);
-
-  // SSR-safe session cookie check
-  useEffect(() => {
-    const checkSession = () => {
-      const hasCookie = typeof window !== "undefined" && document.cookie.includes("sessionid");
-      setIsSessionReady(hasCookie);
-    };
-    checkSession();
-    if (typeof window !== "undefined") {
-      const interval = setInterval(checkSession, 500);
-      return () => clearInterval(interval);
-    }
-  }, []);
-
   const { data: reviewsData, error } = useSWR(
-    isSessionReady && API_URL ? `${API_URL}/api/reviews?all=true` : null,
+    API_URL ? `${API_URL}/api/reviews?all=true` : null,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -39,9 +24,7 @@ const Reviews = () => {
   );
 
   // Debug API response
-  useEffect(() => {
-    console.log("API Response:", reviewsData, "Error:", error);
-  }, [reviewsData, error]);
+  console.log("API Response:", reviewsData, "Error:", error);
 
   const reviews = useMemo(() => {
     if (!reviewsData) return [];
@@ -79,17 +62,17 @@ const Reviews = () => {
       spaceBetween: 16,
       slidesPerView: 1,
       speed: 800,
-      lazy: true, // Enable lazy loading
-      lazyPreloadPrevNext: 1, // Preload 1 slide before/after
+      lazy: true,
+      lazyPreloadPrevNext: 1,
     }),
     []
   );
 
   if (error) {
-    return <div className="text-center py-6 text-sm">Error loading reviews.</div>;
+    return <div className="text-center py-6 text-sm">Reviews are not available at the moment.</div>;
   }
 
-  if (!reviewsData && isSessionReady) {
+  if (!reviewsData) {
     return (
       <div className="container px-4 sm:px-6 w-full max-w-full">
         <h1 className="text-center pt-6 mb-6 font-[Times] text-[#2e5939] text-2xl sm:text-3xl md:text-4xl leading-[1.08] font-bold">
