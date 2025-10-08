@@ -71,23 +71,30 @@ const Hero = () => {
   return (
     <section className="w-full">
       <Slider {...settings}>
-        {slides.map((slide, index) => (
-          <div key={index} className="outline-none w-full flex flex-col items-center">
-            <Link
-              to={slide.productId === "default" ? "#" : `/productdetails/${slide.productId}`}
-              className="w-full"
-            >
-              <img
-                src={slide.image}
-                alt={slide.productName}
-                loading={index === 0 ? "eager" : "lazy"}
-                fetchpriority={index === 0 ? "high" : "auto"}
-                className="w-full h-[200px] sm:h-[200px] md:h-[400px] lg:h-[410px] object-cover rounded-lg"
-              />
-            </Link>
-          </div>
-        ))}
-      </Slider>
+  {slides.map((slide, index) => (
+    <div
+      key={index}
+      className="outline-none w-full flex flex-col items-center"
+    >
+      <Link
+        to={slide.productId === "default" ? "#" : `/productdetails/${slide.productId}`}
+        className="w-full"
+      >
+        {/* Replace <img> with wrapper div */}
+        <div className="w-full h-[200px] sm:h-[200px] md:h-[400px] lg:h-[410px] overflow-hidden rounded-lg">
+          <img
+            src={slide.image}
+            alt={slide.productName}
+            loading={index === 0 ? "eager" : "lazy"}
+            fetchpriority={index === 0 ? "high" : "auto"}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      </Link>
+    </div>
+  ))}
+</Slider>
+
     </section>
   );
 };

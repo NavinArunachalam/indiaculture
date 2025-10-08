@@ -1,56 +1,114 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FaStar, FaStarHalfAlt, FaRegStar, FaQuoteLeft } from "react-icons/fa";
 import "swiper/css";
 import "swiper/css/pagination";
-import { Pagination, Autoplay } from "swiper/modules";
+import { Pagination, Autoplay, Lazy } from "swiper/modules";
+import useSWR from "swr";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const fetcher = url => axios.get(url, { withCredentials: true }).then(res => res.data.data);
+
 const Reviews = () => {
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [isSessionReady, setIsSessionReady] = useState(false);
 
+  // Check for session cookie (adjust cookie name as needed)
   useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        setLoading(true);
-        const res = await axios.get(`${API_URL}/api/reviews?all=true`, { withCredentials: true });
-
-        // Format stars
-        const formatted = res.data.data.map((item) => {
-          const stars = Array.from({ length: 5 }, (_, i) => {
-            if (i + 1 <= Math.floor(item.rating)) return 1;
-            if (i < item.rating) return 0.5;
-            return 0;
-          });
-          return { ...item, stars };
-        });
-
-        setReviews(formatted);
-      } catch (err) {
-        console.error("Failed to fetch Reviews:", err);
-      } finally {
-        setLoading(false);
-      }
+    const checkSession = () => {
+      // Replace 'sessionid' with your actual cookie name, or use a generic check
+      const hasCookie = document.cookie.includes("sessionid");
+      setIsSessionReady(hasCookie);
     };
-
-    fetchReviews();
+    checkSession();
+    // Poll briefly to handle async cookie setting
+    const interval = setInterval(checkSession, 500);
+    return () => clearInterval(interval);
   }, []);
 
-  // Group reviews into sets of 3 for desktop and 2 for mobile
-  const groupedReviewsDesktop = [];
-  for (let i = 0; i < reviews.length; i += 3) {
-    groupedReviewsDesktop.push(reviews.slice(i, i + 3));
-  }
-  const groupedReviewsMobile = [];
-  for (let i = 0; i < reviews.length; i += 2) {
-    groupedReviewsMobile.push(reviews.slice(i, i + 2));
+  const { data: reviewsData, error } = useSWR(
+    isSessionReady ? `${API_URL}/api/reviews?all=true` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000, // Cache for 60s
+      errorRetryCount: 3, // Retry 3 times on failure
+      errorRetryInterval: 2000, // Wait 2s between retries
+    }
+  );
+
+  // Log API response for debugging
+  useEffect(() => {
+    console.log("API Response:", reviewsData, "Error:", error);
+  }, [reviewsData, error]);
+
+  const reviews = useMemo(() => {
+    if (!reviewsData) return [];
+    return reviewsData.map(item => {
+      const stars = Array.from({ length: 5 }, (_, i) => {
+        if (i + 1 <= Math.floor(item.rating)) return 1;
+        if (i < item.rating) return 0.5;
+        return 0;
+      });
+      return { ...item, stars };
+    });
+  }, [reviewsData]);
+
+  const groupedReviewsDesktop = useMemo(() => {
+    const groups = [];
+    for (let i = 0; i < reviews.length; i += 3) {
+      groups.push(reviews.slice(i, i + 3));
+    }
+    return groups;
+  }, [reviews]);
+
+  const groupedReviewsMobile = useMemo(() => {
+    const groups = [];
+    for (let i = 0; i < reviews.length; i += 2) {
+      groups.push(reviews.slice(i, i + 2));
+    }
+    return groups;
+  }, [reviews]);
+
+  const swiperSettings = useMemo(
+    () => ({
+      modules: [Pagination, Autoplay, Lazy],
+      pagination: { clickable: true },
+      autoplay: { delay: 2500, disableOnInteraction: false },
+      spaceBetween: 16,
+      slidesPerView: 1,
+      speed: 800,
+      lazy: { loadPrevNext: true },
+    }),
+    []
+  );
+
+  if (error) {
+    return <div className="text-center py-6 text-sm">Error loading reviews.</div>;
   }
 
-  if (loading) return <div className="text-center py-6 text-sm">Loading Reviews...</div>;
-  if (!reviews.length) return <div className="text-center py-6 text-sm">No Reviews found.</div>;
+  if (!reviewsData && isSessionReady) {
+    return (
+      <div className="container px-4 sm:px-6 w-full max-w-full">
+        <h1 className="text-center pt-6 mb-6 font-[Times] text-[#2e5939] text-2xl sm:text-3xl md:text-4xl leading-[1.08] font-bold">
+          Customer Reviews
+        </h1>
+        <div className="flex flex-col md:flex-row md:space-x-4">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <div
+              key={idx}
+              className="bg-gray-200 animate-pulse rounded-lg w-full md:w-1/3 h-[140px] md:h-[150px] mb-4 md:mb-0"
+            ></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!reviews.length) {
+    return <div className="text-center py-6 text-sm">No Reviews found.</div>;
+  }
 
   return (
     <div className="container px-4 sm:px-6 w-full max-w-full">
@@ -60,22 +118,14 @@ const Reviews = () => {
 
       {/* Mobile Swiper (2 stacked) */}
       <div className="md:hidden">
-        <Swiper
-          modules={[Pagination, Autoplay]}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 2500, disableOnInteraction: false }}
-          spaceBetween={16}
-          slidesPerView={1}
-          speed={800}
-          className="w-full h-[300px]"
-        >
+        <Swiper {...swiperSettings} className="w-full h-[300px]">
           {groupedReviewsMobile.map((pair, index) => (
             <SwiperSlide key={index} className="pb-5">
-              <div className="flex flex-col  w-full h-[290px]">
+              <div className="flex flex-col w-full h-[290px]">
                 {pair.map((item, idx) => (
                   <div
                     key={idx}
-                    className="bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm flex flex-col p-4 w-full h-[160px]"
+                    className="bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm flex flex-col p-4 w-full h-[140px]"
                   >
                     <div className="flex-1 overflow-hidden">
                       <div className="text-left relative flex">
@@ -111,15 +161,7 @@ const Reviews = () => {
 
       {/* Desktop Swiper (3 side-by-side) */}
       <div className="hidden md:block">
-        <Swiper
-          modules={[Pagination, Autoplay]}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 2500, disableOnInteraction: false }}
-          spaceBetween={16}
-          slidesPerView={1}
-          speed={800}
-          className="w-full h-[170px]"
-        >
+        <Swiper {...swiperSettings} className="w-full h-[170px]">
           {groupedReviewsDesktop.map((trio, index) => (
             <SwiperSlide key={index} className="pb-8">
               <div className="flex flex-row space-x-4 w-full h-[150px]">
