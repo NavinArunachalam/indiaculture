@@ -57,7 +57,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <Routes>
-
+          <Route path="/login" element={<Login />} />
         {/* --------- USER LAYOUT ROUTES --------- */}
         <Route element={<UserLayout />}>
           <Route path="/" element={<Home />} />
@@ -77,7 +77,6 @@ function App() {
           <Route path="/reviews" element={<ReviewSection />} />
           <Route path="/faq" element={<Faq />} />
           <Route path="/help" element={<Help />} />
-          <Route path="/login" element={<Login />} />
           <Route path="/offerspage" element={<OfferPage />} />
         </Route>
 
