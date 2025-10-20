@@ -1,6 +1,5 @@
 const { createUser, loginUser, getUserById, updateAddress, getAllUsers, updateUserRole } = require("../services/UserService");
 const User = require("../models/User");
-
 // ✅ Register
 const register = async (req, res, next) => {
   try {
@@ -102,77 +101,38 @@ const logout = async (req, res) => {
   }
 };
 
-// ✅ Fixed Get Profile
+
+// ✅ Get current user
 const getProfile = async (req, res) => {
-  try {
-    // ✅ Check session exists and is saved
-    if (!req.session || !req.session.userId) {
-      return res.status(401).json({ message: "Not logged in - no session" });
-    }
-
-    const user = await getUserById(req.session.userId);
-    
-    // ✅ Refresh session
-    await new Promise((resolve, reject) => {
-      req.session.touch((err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
-
-    res.json({
-      ...user.toObject(),
-      sessionId: req.sessionID // for debugging
-    });
-  } catch (err) {
-    console.error('Get profile error:', err);
-    res.status(500).json({ message: err.message });
-  }
+  if (!req.session.userId) return res.status(401).json({ message: "Not logged in" });
+  const user = await getUserById(req.session.userId);
+  res.json(user);
 };
 
-// ✅ Fixed Update User Address
+// Update user address
 const updateUserAddress = async (req, res) => {
+  const { pincode, city, state, address } = req.body;
+
   try {
-    // ✅ Use session instead of req.user
-    if (!req.session || !req.session.userId) {
-      return res.status(401).json({ message: "Not authenticated - no session" });
-    }
-
-    const { pincode, city, state, address } = req.body;
-
     if (!pincode || !city || !state || !address) {
       return res.status(400).json({ message: "All address fields are required" });
     }
 
     const updatedUser = await updateAddress(
-      req.session.userId, // ✅ Use session ID
+      req.user._id, // assuming user is authenticated and req.user is set
       { pincode, city, state, address },
-      { new: true }
+      { new: true } // return updated document
     );
-
-    // ✅ Save session after update
-    await new Promise((resolve, reject) => {
-      req.session.save((err) => {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
 
     res.json({ message: "Address updated", data: updatedUser });
   } catch (err) {
-    console.error('Update address error:', err);
+    console.error(err);
     res.status(500).json({ message: "Failed to update address" });
   }
 };
 
-// ✅ Admin Get All Users
 const adminGetAllUsers = async (req, res, next) => {
   try {
-    // ✅ Check admin session
-    if (!req.session || !req.session.userId) {
-      return res.status(401).json({ message: "Admin authentication required" });
-    }
-
     const users = await getAllUsers();
     res.json({ users });
   } catch (err) {
@@ -180,16 +140,13 @@ const adminGetAllUsers = async (req, res, next) => {
   }
 };
 
-// ✅ Admin Get User By ID
+
+// ✅ Admin - Get single user by ID
+// ✅ Admin - Get single user by ID
 const adminGetUserById = async (req, res, next) => {
   try {
-    // ✅ Check admin session
-    if (!req.session || !req.session.userId) {
-      return res.status(401).json({ message: "Admin authentication required" });
-    }
-
-    const { id } = req.params;
-    const user = await getUserById(id);
+    const { id } = req.params; // match route param
+    const user = await getUserById(id); // service handles errors
 
     res.json({ message: "User fetched successfully", user });
   } catch (err) {
@@ -200,12 +157,6 @@ const adminGetUserById = async (req, res, next) => {
   }
 };
 
-module.exports = { 
-  register, 
-  login, 
-  logout, 
-  getProfile, 
-  updateUserAddress, 
-  adminGetAllUsers, 
-  adminGetUserById 
-};
+module.exports = { register, login, logout, getProfile, updateUserAddress, adminGetAllUsers, adminGetUserById };
+
+

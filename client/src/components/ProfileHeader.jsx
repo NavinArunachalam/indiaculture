@@ -14,9 +14,6 @@ export const ProfileHeader = ({ name, email }) => {
             <p className="text-gray-500">{email}</p>
 
             <div className="flex gap-2 mt-3">
-              <span className="px-3 py-1 text-sm rounded-full bg-gray-100 text-green-700">
-                Premium Member
-              </span>
               <span className="px-3 py-1 text-sm rounded-full bg-green-100 text-green-600">
                 ✓ Verified
               </span>
