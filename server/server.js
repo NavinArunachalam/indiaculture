@@ -39,7 +39,7 @@ const userSession = session({
     collectionName: "sessions",
   }),
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 1000 * 60 * 60 * 24 * 365,
     sameSite: isProd ? "none" : "lax",
     secure: isProd,
     httpOnly: true,
@@ -63,5 +63,7 @@ app.use((err, req, res, next) => {
 connectDB()
   .then(() => console.log("MongoDB connected ✅"))
   .catch((err) => console.error("Failed to connect to DB:", err));
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT} 🚀`);
+});
 module.exports = app;
