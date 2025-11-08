@@ -16,7 +16,8 @@ import ProductCard from "./ProductCard";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Debounce
+// ──────────────────────────────────────────────────────────────
+// Debounce (unchanged)
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -25,7 +26,8 @@ const debounce = (func, wait) => {
   };
 };
 
-// Skeleton Loader
+// ──────────────────────────────────────────────────────────────
+// Skeleton (unchanged)
 const ProductCardSkeleton = () => (
   <div className="w-full bg-white rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex flex-col h-[420px] sm:h-[360px] max-sm:h-[280px] animate-pulse">
     <div className="skeleton-image h-[200px] sm:h-[140px] max-sm:h-[100px] w-full bg-gray-200"></div>
@@ -47,26 +49,40 @@ const HairCare = () => {
   const [wishlist, setWishlist] = useState([]);
   const [cart, setCart] = useState([]);
   const [toggling, setToggling] = useState({ wishlist: {}, cart: {} });
-  const [isMobile, setIsMobile] = useState(false); // NEW: Track mobile state
 
+  // ───── NEW: autoplay control that is safe for SSR ─────
+  const [autoplayCfg, setAutoplayCfg] = useState(false); // false = no autoplay on server
   const swiperRef = useRef(null);
 
-  // Detect mobile for autoplay (SSR-safe)
+  // Detect mobile **once** after mount
   useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
+    const check = () => {
+      setAutoplayCfg(
+        window.innerWidth < 640
+          ? { delay: 2000, disableOnInteraction: false, pauseOnMouseEnter: false }
+          : false
+      );
     };
 
-    checkMobile();
-    const debouncedResize = debounce(checkMobile, 100);
-    window.addEventListener("resize", debouncedResize);
-
-    return () => window.removeEventListener("resize", debouncedResize);
+    check(); // first run
+    const debounced = debounce(check, 120);
+    window.addEventListener("resize", debounced);
+    return () => window.removeEventListener("resize", debounced);
   }, []);
 
-  // Fetch data
+  // ───── Swiper init / resize handling (only client) ─────
+  const handleSwiper = (swiper) => {
+    swiperRef.current = swiper;
+  };
+
+  const handleResize = (swiper) => {
+    const shouldRun = window.innerWidth < 640;
+    if (shouldRun && !swiper.autoplay.running) swiper.autoplay.start();
+    else if (!shouldRun && swiper.autoplay.running) swiper.autoplay.stop();
+  };
+
+  // ──────────────────────────────────────────────────────────────
+  // Fetch data (unchanged)
   useEffect(() => {
     const controller = new AbortController();
 
@@ -124,7 +140,8 @@ const HairCare = () => {
     return () => controller.abort();
   }, []);
 
-  // Wishlist toggle
+  // ──────────────────────────────────────────────────────────────
+  // Wishlist toggle (unchanged)
   const toggleWishlist = useCallback(
     debounce(async (productId) => {
       setToggling((prev) => ({
@@ -182,7 +199,8 @@ const HairCare = () => {
     [wishlist]
   );
 
-  // Cart toggle
+  // ──────────────────────────────────────────────────────────────
+  // Cart toggle (unchanged)
   const toggleCart = useCallback(
     debounce(async (productId) => {
       setToggling((prev) => ({
@@ -254,6 +272,8 @@ const HairCare = () => {
 
   const memoizedProducts = useMemo(() => products, [products]);
 
+  // ──────────────────────────────────────────────────────────────
+  // Loading UI (unchanged)
   if (loading) {
     return (
       <div className="px-4 py-10">
@@ -285,6 +305,8 @@ const HairCare = () => {
     );
   }
 
+  // ──────────────────────────────────────────────────────────────
+  // MAIN RENDER
   return (
     <div className="px-4 py-10">
       <h2 className="text-center text-2xl font-bold mb-8 text-green-900">
@@ -297,22 +319,15 @@ const HairCare = () => {
         slidesPerView={2}
         loop={true}
         grabCursor={true}
-        autoplay={
-          isMobile
-            ? {
-                delay: 2000,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: false,
-              }
-            : false
-        }
+        autoplay={autoplayCfg}             
+        onSwiper={handleSwiper}
+        onResize={handleResize}            
         breakpoints={{
           1280: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
           1024: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
-          640: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
-          0: { slidesPerView: 2, spaceBetween: 10 },
+          640:  { slidesPerView: 5, spaceBetween: 20, autoplay: false },
+          0:    { slidesPerView: 2, spaceBetween: 10 },
         }}
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
         className="swiper-container"
       >
         {memoizedProducts.map((product) => (
