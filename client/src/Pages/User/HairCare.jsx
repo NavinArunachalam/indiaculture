@@ -313,7 +313,7 @@ const HairCare = () => {
   grabCursor={true}
   autoplay={{
     delay: 2000,
-    disableOnInteraction: true,
+    disableOnInteraction: false,
   }}
   breakpoints={{
     1280: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
