@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 import axios from "axios";
@@ -10,7 +16,7 @@ import ProductCard from "./ProductCard";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Simple debounce utility
+// Debounce
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -19,7 +25,7 @@ const debounce = (func, wait) => {
   };
 };
 
-// Skeleton loader component
+// Skeleton Loader
 const ProductCardSkeleton = () => (
   <div className="w-full bg-white rounded-xl overflow-hidden shadow-[0_4px_12px_rgba(0,0,0,0.1)] flex flex-col h-[420px] sm:h-[360px] max-sm:h-[280px] animate-pulse">
     <div className="skeleton-image h-[200px] sm:h-[140px] max-sm:h-[100px] w-full bg-gray-200"></div>
@@ -35,7 +41,6 @@ const ProductCardSkeleton = () => (
   </div>
 );
 
-      
 const HairCare = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,6 +48,36 @@ const HairCare = () => {
   const [cart, setCart] = useState([]);
   const [toggling, setToggling] = useState({ wishlist: {}, cart: {} });
 
+  const swiperRef = useRef(null);
+
+  // ✅ Mobile autoplay fix (works on Vercel)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const applyAutoplayState = () => {
+      const sw = swiperRef.current;
+      if (!sw || !sw.autoplay) return;
+
+      if (window.innerWidth < 640) {
+        try {
+          sw.autoplay.start();
+        } catch {}
+      } else {
+        try {
+          sw.autoplay.stop();
+        } catch {}
+      }
+    };
+
+    applyAutoplayState(); // run on first load
+
+    const debouncedResize = debounce(applyAutoplayState, 150);
+    window.addEventListener("resize", debouncedResize);
+
+    return () => window.removeEventListener("resize", debouncedResize);
+  }, [products]);
+
+  // Fetch data
   useEffect(() => {
     const controller = new AbortController();
 
@@ -50,9 +85,8 @@ const HairCare = () => {
       try {
         setLoading(true);
 
-        // Fetch products, wishlist, and cart concurrently
         const [productsRes, wishlistRes, cartRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/api/products`, { signal: controller.signal }), // Removed category param
+          axios.get(`${API_URL}/api/products`, { signal: controller.signal }),
           axios.get(`${API_URL}/api/wishlist`, {
             withCredentials: true,
             signal: controller.signal,
@@ -63,70 +97,52 @@ const HairCare = () => {
           }),
         ]);
 
-        // Handle products
         if (productsRes.status === "fulfilled") {
           const fetchedProducts = productsRes.value.data;
-          console.log("API Products Response:", fetchedProducts);
-          // Filter client-side like the previous version
           const hairCareProducts = Array.isArray(fetchedProducts)
             ? fetchedProducts.filter((p) => p.category?.name === "Hair Care")
             : [];
-          console.log("Filtered Hair Care Products:", hairCareProducts);
           setProducts(hairCareProducts);
-          // Optional: Cache products (commented out to avoid caching issues)
-          // localStorage.setItem("hairCareProducts", JSON.stringify(hairCareProducts));
-          // localStorage.setItem("hairCareProductsTime", Date.now().toString());
-        } else {
-          console.error("Products fetch failed:", productsRes.reason);
         }
 
-        // Handle wishlist
         if (wishlistRes.status === "fulfilled") {
-          const wishlistData = wishlistRes.value.data;
-          console.log("Wishlist Response:", wishlistData);
           setWishlist(
-            Array.isArray(wishlistData)
-              ? wishlistData.map((item) => item.product?._id).filter(Boolean)
+            Array.isArray(wishlistRes.value.data)
+              ? wishlistRes.value.data
+                  .map((item) => item.product?._id)
+                  .filter(Boolean)
               : []
           );
-        } else {
-          console.log("Wishlist fetch skipped (user not logged in)");
         }
 
-        // Handle cart
         if (cartRes.status === "fulfilled") {
           const cartData = cartRes.value.data;
-          console.log("Cart Response:", cartData);
           setCart(
             Array.isArray(cartData.items)
               ? cartData.items.map((item) => item.product?._id).filter(Boolean)
               : []
           );
-        } else {
-          console.log("Cart fetch skipped (user not logged in)");
         }
       } catch (err) {
-        if (err.name === "AbortError") return;
-        console.error("Fetch error:", err.response?.data, err.message);
+        if (err.name !== "AbortError")
+          console.error("Fetch Error:", err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    // Clear cache to ensure fresh data
-    localStorage.removeItem("hairCareProducts");
-    localStorage.removeItem("hairCareProductsTime");
     fetchData();
-
     return () => controller.abort();
   }, []);
 
+  // Wishlist toggle
   const toggleWishlist = useCallback(
     debounce(async (productId) => {
       setToggling((prev) => ({
         ...prev,
         wishlist: { ...prev.wishlist, [productId]: true },
       }));
+
       const optimistic = wishlist.includes(productId)
         ? wishlist.filter((id) => id !== productId)
         : [...wishlist, productId];
@@ -140,10 +156,9 @@ const HairCare = () => {
           Toastify({
             text: "Removed from Wishlist",
             duration: 2000,
-            gravity: "bottom",
             position: "center",
+            gravity: "bottom",
             backgroundColor: "#dc2626",
-            className: "toastify-mobile",
           }).showToast();
         } else {
           await axios.post(
@@ -154,22 +169,19 @@ const HairCare = () => {
           Toastify({
             text: "Added to Wishlist",
             duration: 2000,
-            gravity: "bottom",
             position: "center",
+            gravity: "bottom",
             backgroundColor: "#16a34a",
-            className: "toastify-mobile",
           }).showToast();
         }
-      } catch (err) {
-        console.error("Wishlist error:", err);
-        setWishlist(wishlist); // Revert optimistic update
+      } catch {
+        setWishlist(wishlist);
         Toastify({
           text: "Please login to manage wishlist",
           duration: 2000,
-          gravity: "bottom",
           position: "center",
+          gravity: "bottom",
           backgroundColor: "#dc2626",
-          className: "toastify-mobile",
         }).showToast();
       } finally {
         setToggling((prev) => ({
@@ -181,26 +193,23 @@ const HairCare = () => {
     [wishlist]
   );
 
+  // Cart toggle
   const toggleCart = useCallback(
     debounce(async (productId) => {
       setToggling((prev) => ({
         ...prev,
         cart: { ...prev.cart, [productId]: true },
       }));
+
       const product = products.find((p) => p._id === productId);
       if (product?.stock === 0) {
         Toastify({
           text: "Product is out of stock",
           duration: 2000,
-          gravity: "bottom",
           position: "center",
+          gravity: "bottom",
           backgroundColor: "#dc2626",
-          className: "toastify-mobile",
         }).showToast();
-        setToggling((prev) => ({
-          ...prev,
-          cart: { ...prev.cart, [productId]: false },
-        }));
         return;
       }
 
@@ -217,10 +226,9 @@ const HairCare = () => {
           Toastify({
             text: "Removed from Cart",
             duration: 2000,
-            gravity: "bottom",
             position: "center",
+            gravity: "bottom",
             backgroundColor: "#dc2626",
-            className: "toastify-mobile",
           }).showToast();
         } else {
           await axios.post(
@@ -231,22 +239,19 @@ const HairCare = () => {
           Toastify({
             text: "Added to Cart",
             duration: 2000,
-            gravity: "bottom",
             position: "center",
+            gravity: "bottom",
             backgroundColor: "#16a34a",
-            className: "toastify-mobile",
           }).showToast();
         }
-      } catch (err) {
-        console.error("Cart error:", err);
-        setCart(cart); // Revert optimistic update
+      } catch {
+        setCart(cart);
         Toastify({
           text: "Please login to manage cart",
           duration: 2000,
-          gravity: "bottom",
           position: "center",
+          gravity: "bottom",
           backgroundColor: "#dc2626",
-          className: "toastify-mobile",
         }).showToast();
       } finally {
         setToggling((prev) => ({
@@ -272,16 +277,9 @@ const HairCare = () => {
           slidesPerView={2}
           loop={true}
           grabCursor={true}
-          breakpoints={{
-            1280: { slidesPerView: 5, spaceBetween: 20 },
-            1024: { slidesPerView: 5, spaceBetween: 20 },
-            640: { slidesPerView: 5, spaceBetween: 20 },
-            320: { slidesPerView: 2, spaceBetween: 10 },
-          }}
-          className="swiper-container"
         >
-          {[...Array(2)].map((_, index) => (
-            <SwiperSlide key={index} className="">
+          {[...Array(2)].map((_, i) => (
+            <SwiperSlide key={i}>
               <ProductCardSkeleton />
             </SwiperSlide>
           ))}
@@ -291,7 +289,6 @@ const HairCare = () => {
   }
 
   if (!memoizedProducts.length) {
-    console.log("No products to display, products array:", memoizedProducts);
     return (
       <div className="text-center py-10 text-gray-500 text-lg">
         No Hair Care Products Available
@@ -304,35 +301,32 @@ const HairCare = () => {
       <h2 className="text-center text-2xl font-bold mb-8 text-green-900">
         Recommended Hair Care Solutions
       </h2>
- <Swiper
-  modules={[Navigation, Autoplay]}
-  spaceBetween={8}
-  slidesPerView={2}
-  loop={true}
-  grabCursor={true}
-  autoplay={{
-    delay: 2000,
-    disableOnInteraction: false, // ✅ required for Chrome production autoplay
-  }}
-  breakpoints={{
-    1280: { slidesPerView: 5, spaceBetween: 20 },
-    1024: { slidesPerView: 5, spaceBetween: 20 },
-    640:  { slidesPerView: 5, spaceBetween: 20 },
-    0:    { slidesPerView: 2, spaceBetween: 10 },
-  }}
-  onBreakpoint={(swiper, breakpoint) => {
-    // ✅ Only stop autoplay on desktop AFTER init
-    if (breakpoint >= 640) swiper.autoplay.stop();
-    else swiper.autoplay.start();
-  }}
-  
-  className="swiper-container"
->
 
-
-
+      <Swiper
+        modules={[Navigation, Autoplay]}
+        spaceBetween={8}
+        slidesPerView={2}
+        loop={true}
+        grabCursor={true}
+        autoplay={{
+          delay: 2000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: false,
+        }}
+        breakpoints={{
+          1280: { slidesPerView: 5, spaceBetween: 20 },
+          1024: { slidesPerView: 5, spaceBetween: 20 },
+          640: { slidesPerView: 5, spaceBetween: 20 },
+          0: { slidesPerView: 2, spaceBetween: 10 },
+        }}
+        onSwiper={(swiper) => (swiperRef.current = swiper)}
+        className="swiper-container"
+      >
         {memoizedProducts.map((product) => (
-          <SwiperSlide key={product._id} className="flex items-center justify-center">
+          <SwiperSlide
+            key={product._id}
+            className="flex items-center justify-center"
+          >
             <ProductCard
               product={product}
               isWished={wishlist.includes(product._id)}
