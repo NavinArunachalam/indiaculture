@@ -47,35 +47,24 @@ const HairCare = () => {
   const [wishlist, setWishlist] = useState([]);
   const [cart, setCart] = useState([]);
   const [toggling, setToggling] = useState({ wishlist: {}, cart: {} });
+  const [isMobile, setIsMobile] = useState(false); // NEW: Track mobile state
 
   const swiperRef = useRef(null);
 
-  // ✅ Mobile autoplay fix (works on Vercel)
+  // Detect mobile for autoplay (SSR-safe)
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const applyAutoplayState = () => {
-      const sw = swiperRef.current;
-      if (!sw || !sw.autoplay) return;
-
-      if (window.innerWidth < 640) {
-        try {
-          sw.autoplay.start();
-        } catch {}
-      } else {
-        try {
-          sw.autoplay.stop();
-        } catch {}
-      }
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
     };
 
-    applyAutoplayState(); // run on first load
-
-    const debouncedResize = debounce(applyAutoplayState, 150);
+    checkMobile();
+    const debouncedResize = debounce(checkMobile, 100);
     window.addEventListener("resize", debouncedResize);
 
     return () => window.removeEventListener("resize", debouncedResize);
-  }, [products]);
+  }, []);
 
   // Fetch data
   useEffect(() => {
@@ -308,15 +297,19 @@ const HairCare = () => {
         slidesPerView={2}
         loop={true}
         grabCursor={true}
-        autoplay={{
-          delay: 2000,
-          disableOnInteraction: false,
-          pauseOnMouseEnter: false,
-        }}
+        autoplay={
+          isMobile
+            ? {
+                delay: 2000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: false,
+              }
+            : false
+        }
         breakpoints={{
-          1280: { slidesPerView: 5, spaceBetween: 20 },
-          1024: { slidesPerView: 5, spaceBetween: 20 },
-          640: { slidesPerView: 5, spaceBetween: 20 },
+          1280: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
+          1024: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
+          640: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
           0: { slidesPerView: 2, spaceBetween: 10 },
         }}
         onSwiper={(swiper) => (swiperRef.current = swiper)}
