@@ -1,0 +1,355 @@
+/* --- Wrapper & Background --- */
+.review-page-wrapper {
+  font-family: 'Poppins', sans-serif; /* Match HTML */
+  margin: 0; /* Match HTML */
+  padding: 0; /* Match HTML */
+  background: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover; /* Match HTML */
+  color: #333; /* Match HTML */
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.review-page-wrapper::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8); /* Match HTML */
+  -webkit-backdrop-filter: blur(3px); /* Vendor prefix for Safari */
+  backdrop-filter: blur(3px); /* Match HTML */
+  z-index: -1; /* Ensure behind content */
+}
+
+.review-page-wrapper > * {
+  position: relative;
+  z-index: 0; /* Content above blur */
+}
+
+.review-bg {
+  display: none; /* Remove redundant div */
+}
+
+/* --- Main Page Grid --- */
+.review-page {
+  max-width: 1000px; /* Match HTML */
+  margin: 2em auto; /* Match HTML */
+  padding: 1em; /* Match HTML */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2em; /* Match HTML */
+}
+
+.review-page h1 {
+  grid-column: span 1;
+  text-align: center;
+  margin: 0.8em 0; /* Match HTML */
+  color: #2e5939; /* Match HTML */
+  font-family: "Playfair Display", serif; /* Consistent with previous */
+  font-weight: 700; /* Match HTML */
+  font-size: 1.8em; /* Match HTML */
+  line-height: 1.3em;
+}
+
+/* --- Address Card --- */
+.address-card {
+  background: #fff; /* Match HTML */
+  padding: 1.5em; /* Match HTML */
+  border-radius: 12px; /* Match HTML */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Match HTML */
+  margin-bottom: 1em; /* Match HTML */
+}
+
+.address-card h2 {
+  margin-bottom: 0.4em; /* Match HTML */
+  font-size: 1.2em; /* Match HTML */
+  color: #2e5939; /* Match HTML */
+}
+
+.address-card p {
+  margin: 0.25em 0; /* Match HTML */
+  color: #444; /* Match HTML */
+  font-size: 0.95em; /* Match HTML */
+}
+
+/* --- Cart Items --- */
+.cart-items {
+  background: #fff; /* Match HTML */
+  padding: 1.2em; /* Match HTML */
+  border-radius: 12px; /* Match HTML */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Match HTML */
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between; /* Match HTML */
+  align-items: center; /* Match HTML */
+  padding: 0.8em 0; /* Match HTML */
+  border-bottom: 1px solid #eee; /* Match HTML */
+  gap: 1em;
+}
+
+.cart-item:last-child {
+  border-bottom: none; /* Match HTML */
+}
+
+.item-info {
+  display: flex;
+  gap: 1em; /* Match HTML */
+  flex: 1;
+}
+
+.item-info img {
+  width: 70px; /* Match HTML */
+  height: 70px; /* Match HTML */
+  object-fit: cover; /* Match HTML */
+  border-radius: 8px; /* Match HTML */
+}
+
+.item-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.item-details span {
+  display: block; /* Match HTML */
+  font-size: 0.95em; /* Match HTML */
+  font-weight: 500; /* Match HTML */
+  margin-bottom: 0.2em; /* Match HTML */
+  white-space: normal;
+}
+
+.item-price {
+  font-size: 0.9em; /* Match HTML */
+  color: #666; /* Match HTML */
+}
+
+/* --- Summary Card --- */
+.summary-card {
+  background: #fff; /* Match HTML */
+  padding: 1.2em; /* Match HTML */
+  border-radius: 12px; /* Match HTML */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Match HTML */
+  height: fit-content; /* Match HTML */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Match HTML */
+}
+
+.summary-card h2 {
+  text-align: center; /* Match HTML */
+  font-size: 1.2em; /* Match HTML */
+  margin-bottom: 0.8em; /* Match HTML */
+  color: #2e5939; /* Match HTML */
+  width: 100%;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between; /* Match HTML */
+  width: 100%;
+  padding: 0.5em 0; /* Match HTML */
+  font-size: 0.95em; /* Match HTML */
+  color: #444; /* Match HTML */
+}
+
+.summary-row.total {
+  font-weight: bold; /* Match HTML */
+  font-size: 1.1em; /* Match HTML */
+  color: #000; /* Match HTML */
+  border-top: 2px solid #eee; /* Match HTML */
+  margin-top: 0.8em; /* Match HTML */
+  padding-top: 0.8em; /* Match HTML */
+}
+
+/* --- Place Order Button --- */
+.place-order-btn {
+  display: block; /* Match HTML */
+  width: 80%; /* Match HTML */
+  margin: 1em auto 0; /* Match HTML */
+  padding: 0.6em 0; /* Match HTML */
+  background: linear-gradient(135deg, #28a745, #20c997); /* Match HTML */
+  color: #fff; /* Match HTML */
+  text-align: center; /* Match HTML */
+  font-weight: 600; /* Match HTML */
+  border-radius: 8px; /* Match HTML */
+  text-decoration: none; /* Match HTML */
+  font-size: 0.95em; /* Match HTML */
+  transition: 0.3s; /* Match HTML */
+}
+
+.place-order-btn:hover {
+  background: linear-gradient(135deg, #218838, #17a589); /* Match HTML */
+  transform: translateY(-2px); /* Match HTML */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15); /* Match HTML */
+}
+
+.place-order-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* --- Desktop View (769px and above) --- */
+@media (min-width: 769px) {
+  .review-page-wrapper {
+    padding: 0; /* Match HTML */
+    margin: 0;
+    width: 100%;
+    background: url('https://images.unsplash.com/photo-1501004318641-b39e6451bec6?ixlib=rb-4.0.3&auto=format&fit=crop&w=2560&q=90') no-repeat center center/cover; /* Higher resolution */
+  }
+
+  .review-page {
+    grid-template-columns: 2fr 1fr; /* Match HTML */
+    gap: 2em; /* Match HTML */
+    max-width: 1000px; /* Match HTML */
+  }
+
+  .review-page h1 {
+    grid-column: span 2; /* Match HTML */
+    font-size: 1.8em; /* Match HTML */
+    margin: 0.8em 0; /* Match HTML */
+  }
+
+  .address-card {
+    padding: 1.5em; /* Match HTML */
+    margin-bottom: 1em; /* Match HTML */
+  }
+
+  .address-card h2 {
+    font-size: 1.2em; /* Match HTML */
+  }
+
+  .address-card p {
+    font-size: 0.95em; /* Match HTML */
+  }
+
+  .cart-items {
+    padding: 1.2em; /* Match HTML */
+  }
+
+  .cart-item {
+    padding: 0.8em 0; /* Match HTML */
+  }
+
+  .item-info img {
+    width: 70px; /* Match HTML */
+    height: 70px;
+  }
+
+  .item-details span {
+    font-size: 0.95em; /* Match HTML */
+  }
+
+  .item-price {
+    font-size: 0.9em; /* Match HTML */
+  }
+
+  .summary-card {
+    padding: 1.2em; /* Match HTML */
+    position: sticky;
+    top: 1em;
+  }
+
+  .summary-card h2 {
+    font-size: 1.2em; /* Match HTML */
+  }
+
+  .summary-row {
+    font-size: 0.95em; /* Match HTML */
+    padding: 0.5em 0; /* Match HTML */
+  }
+
+  .summary-row.total {
+    font-size: 1.1em; /* Match HTML */
+  }
+
+  .place-order-btn {
+    width: 80%; /* Match HTML */
+    padding: 0.6em 0; /* Match HTML */
+    font-size: 0.95em; /* Match HTML */
+  }
+}
+
+/* --- Mobile View (768px and below) --- */
+@media (max-width: 768px) {
+  .review-page-wrapper {
+    padding: 0; /* Match HTML */
+  }
+
+  .review-page {
+    grid-template-columns: 1fr; /* Match HTML */
+    gap: 2em; /* Match HTML */
+    margin: 2em auto; /* Match HTML */
+    max-width: 100%; /* Full-width content */
+  }
+
+  .review-page h1 {
+    font-size: 1.8em; /* Match HTML */
+    margin: 0.8em 0; /* Match HTML */
+  }
+
+  .address-card {
+    padding: 1.5em; /* Match HTML */
+    margin-bottom: 1em; /* Match HTML */
+  }
+
+  .address-card h2 {
+    font-size: 1.2em; /* Match HTML */
+  }
+
+  .address-card p {
+    font-size: 0.95em; /* Match HTML */
+  }
+
+  .cart-items {
+    padding: 1.2em; /* Match HTML */
+  }
+
+  .cart-item {
+    padding: 0.8em 0; /* Match HTML */
+    flex-direction: row; /* Match HTML */
+    align-items: center; /* Match HTML */
+  }
+
+  .item-info img {
+    width: 70px; /* Match HTML */
+    height: 70px; /* Match HTML */
+  }
+
+  .item-details span {
+    font-size: 0.95em; /* Match HTML */
+  }
+
+  .item-price {
+    font-size: 0.9em; /* Match HTML */
+  }
+
+  .summary-card {
+    padding: 1.2em; /* Match HTML */
+  }
+
+  .summary-card h2 {
+    font-size: 1.2em; /* Match HTML */
+  }
+
+  .summary-row {
+    font-size: 0.95em; /* Match HTML */
+    padding: 0.5em 0; /* Match HTML */
+  }
+
+  .summary-row.total {
+    font-size: 1.1em; /* Match HTML */
+  }
+
+  .place-order-btn {
+    width: 95%; /* Match HTML */
+    padding: 0.6em 0; /* Match HTML */
+    font-size: 0.95em; /* Match HTML */
+  }
+}

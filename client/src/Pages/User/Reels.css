@@ -1,0 +1,111 @@
+.reels-social-video-sec,
+.reels-social-video-sec * {
+  box-sizing: border-box;
+}
+
+.reels-social-video-sec {
+  max-width: 100%;
+  padding: 0 1rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+
+
+.reels-video-section {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+  animation: reels-scroll-left 25s linear infinite;
+  will-change: transform;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes reels-scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.reels-video-section.reels-paused {
+  animation-play-state: paused !important;
+}
+
+.reels-video-card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 200px;
+  height: 350px;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reels-video-card .reels-video-element {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  z-index: 1;
+  background: #000;
+}
+
+.reels-video-card .reels-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  transition: background-color 0.3s ease, transform 0.2s ease, opacity 0.2s ease;
+  pointer-events: auto;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.reels-video-card .reels-play-button.reels-toggling {
+  opacity: 0.7;
+}
+
+.reels-video-card .reels-play-button:hover,
+.reels-video-card .reels-play-button:focus {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  transform: translate(-50%, -50%) scale(1.1);
+  outline: none;
+}
+
+.reels-video-card .reels-play-button:focus {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+.reels-video-card .reels-play-svg {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 640px) {
+  .reels-video-card {
+    width: 180px;
+    height: 320px;
+  }
+
+  .reels-video-card .reels-play-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .reels-video-card .reels-play-svg {
+    width: 20px;
+    height: 20px;
+  }
+}
