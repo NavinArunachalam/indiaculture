@@ -304,35 +304,32 @@ const HairCare = () => {
       <h2 className="text-center text-2xl font-bold mb-8 text-green-900">
         Recommended Hair Care Solutions
       </h2>
-    <Swiper
- modules={[Navigation, Autoplay]}
-
+ <Swiper
+  modules={[Navigation, Autoplay]}
   spaceBetween={8}
   slidesPerView={2}
   loop={true}
   grabCursor={true}
   autoplay={{
     delay: 2000,
-    disableOnInteraction: false,
+    disableOnInteraction: false, // ✅ required for Chrome production autoplay
   }}
   breakpoints={{
-    1280: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
-    1024: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
-    640: { slidesPerView: 5, spaceBetween: 20, autoplay: false },
-
-    // ✅ MOBILE ONLY AUTOPLAY
-    0: {
-      slidesPerView: 2,
-      spaceBetween: 10,
-      autoplay: {
-        delay: 2000,
-        disableOnInteraction: false,
-      },
-      loop: true,
-    }
+    1280: { slidesPerView: 5, spaceBetween: 20 },
+    1024: { slidesPerView: 5, spaceBetween: 20 },
+    640:  { slidesPerView: 5, spaceBetween: 20 },
+    0:    { slidesPerView: 2, spaceBetween: 10 },
   }}
+  onBreakpoint={(swiper, breakpoint) => {
+    // ✅ Only stop autoplay on desktop AFTER init
+    if (breakpoint >= 640) swiper.autoplay.stop();
+    else swiper.autoplay.start();
+  }}
+  
   className="swiper-container"
 >
+
+
 
         {memoizedProducts.map((product) => (
           <SwiperSlide key={product._id} className="flex items-center justify-center">
